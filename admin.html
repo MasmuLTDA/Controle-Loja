@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Controle de Clientes</title>
+    <style>
+        :root {
+            --primary-color: #f9afb5;
+            --secondary-color: #e79aa0;
+            --accent-color: #f9afb5;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f5f5;
+            padding: 0;
+            margin: 0;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            max-width: 120px;
+            margin-right: 15px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-name {
+            margin-right: 15px;
+        }
+        
+        .logout-btn {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .filters {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-export {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .page-item {
+            margin: 0 5px;
+        }
+        
+        .page-link {
+            display: block;
+            padding: 5px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="Masmu-negativa.png" alt="Masmu Logo" class="logo">
+            <div class="logo-text">Sistema de Controle de Clientes</div>
+        </div>
+        <div class="user-info">
+            <span class="user-name" id="userName">Administrador</span>
+            <button class="logout-btn" id="logoutBtn">Voltar</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1>Painel Administrativo</h1>
+        <p>Bem-vindo ao painel administrativo do Sistema de Controle de Clientes.</p>
+        
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-title">Total de Clientes</div>
+                <div class="card-value" id="totalClients">0</div>
+                <div class="card-subtitle">Clientes atendidos</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Total de Vendas</div>
+                <div class="card-value" id="totalSales">0</div>
+                <div class="card-subtitle">Vendas concluídas</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Valor Total</div>
+                <div class="card-value" id="totalValue">R$ 0,00</div>
+                <div class="card-subtitle">Em vendas</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Ticket Médio</div>
+                <div class="card-value" id="averageTicket">R$ 0,00</div>
+                <div class="card-subtitle">Por venda</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="recent">Últimos Atendimentos</div>
+            <div class="tab" data-tab="clients">Clientes</div>
+            <div class="tab" data-tab="sales">Vendas</div>
+            <div class="tab" data-tab="attendants">Atendentes</div>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="dateRangeFilter">Período</label>
+                    <select id="dateRangeFilter">
+                        <option value="today" selected>Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="last7days">Últimos 7 dias</option>
+                        <option value="last30days">Últimos 30 dias</option>
+                        <option value="thisMonth">Este mês</option>
+                        <option value="lastMonth">Mês passado</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group" id="customDateGroup" style="display: none;">
+                    <label for="startDateFilter">Data Inicial</label>
+                    <input type="date" id="startDateFilter">
+                </div>
+                
+                <div class="filter-group" id="customDateEndGroup" style="display: none;">
+                    <label for="endDateFilter">Data Final</label>
+                    <input type="date" id="endDateFilter">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="sectorFilter">Setor</label>
+                    <select id="sectorFilter">
+                        <option value="all" selected>Todos</option>
+                        <option value="loja_fisica">Loja Física</option>
+                        <option value="whatsapp_instagram">WhatsApp/Instagram</option>
+                        <option value="caixa">Caixa</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="attendantFilter">Atendente</label>
+                    <select id="attendantFilter">
+                        <option value="all" selected>Todos</option>
+                        <option value="1">Daniela</option>
+                        <option value="2">Kaylane</option>
+                        <option value="3">Fabiola</option>
+                        <option value="4">Eduarda</option>
+                        <option value="5">Daniel</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-buttons">
+                <button class="btn btn-secondary" id="resetFiltersBtn">Limpar Filtros</button>
+                <button class="btn btn-primary" id="applyFiltersBtn">Aplicar Filtros</button>
+                <button class="btn btn-export" id="exportBtn">Exportar Dados</button>
+            </div>
+        </div>
+        
+        <div class="tab-content active" id="recentTab">
+            <h2>Últimos Atendimentos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Atendente</th>
+                        <th>Setor</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody id="recentAttendancesTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="6" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="clientsTab">
+            <h2>Clientes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Contato</th>
+                        <th>Atendimentos</th>
+                        <th>Compras</th>
+                        <th>Valor Total</th>
+                        <th>Último Atendimento</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="6" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="salesTab">
+            <h2>Vendas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Atendente</th>
+                        <th>Produtos</th>
+                        <th>Valor</th>
+                        <th>Forma de Pagamento</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="6" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="attendantsTab">
+            <h2>Desempenho dos Atendentes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Atendente</th>
+                        <th>Setor</th>
+                        <th>Atendimentos</th>
+                        <th>Vendas</th>
+                        <th>Taxa de Conversão</th>
+                        <th>Valor Total</th>
+                        <th>Ticket Médio</th>
+                    </tr>
+                </thead>
+                <tbody id="attendantsTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBP7vj2eaIt5t49PIWRxfGXOVehkNIbJk",
+            authDomain: "controle-loja-9c606.firebaseapp.com",
+            projectId: "controle-loja-9c606",
+            storageBucket: "controle-loja-9c606.firebasestorage.app",
+            messagingSenderId: "291893265962",
+            appId: "1:291893265962:web:3d2405ada39406df40a553",
+            databaseURL: "https://controle-loja-9c606-default-rtdb.firebaseio.com"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
+    
+    <script>
+        // Inicialização do painel administrativo
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('userName').textContent = 'Administrador';
+            
+            // Carregar dados do Firebase
+            loadDashboardData();
+        });
+        
+        // Voltar para a página inicial
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+        
+        // Função para carregar dados do dashboard
+        function loadDashboardData() {
+            // Carregar dados do Firebase
+            database.ref('clientData').on('value', (snapshot) => {
+                const data = snapshot.val();
+                const allData = data ? Object.values(data) : [];
+                
+                if (allData.length > 0) {
+                    // Atualizar estatísticas
+                    updateStatistics(allData);
+                    
+                    // Atualizar tabela de últimos atendimentos
+                    updateRecentAttendances(allData);
+                    
+                    // Atualizar tabela de clientes
+                    updateClientsTable(allData);
+                    
+                    // Atualizar tabela de vendas
+                    updateSalesTable(allData);
+                    
+                    // Atualizar tabela de atendentes
+                    updateAttendantsTable(allData);
+                } else {
+                    document.getElementById('recentAttendancesTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                    document.getElementById('clientsTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                    document.getElementById('salesTable').innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                    document.getElementById('attendantsTable').innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                }
+            });
+        }
+        
+        // Função para atualizar estatísticas
+        function updateStatistics(data) {
+            // Total de clientes únicos
+            const uniqueClients = new Set();
+            data.forEach(item => {
+                if (item.clientName) {
+                    uniqueClients.add(item.clientName.toLowerCase());
+                }
+            });
+            document.getElementById('totalClients').textContent = uniqueClients.size;
+            
+            // Total de vendas
+            const sales = data.filter(item => 
+                (item.attendanceType === 'sale_completed' || item.attendanceType === 'sale') || 
+                (item.operationType === 'payment') || 
+                (item.conversion === 'yes')
+            );
+            document.getElementById('totalSales').textContent = sales.length;
+            
+            // Valor total
+            let totalValue = 0;
+            sales.forEach(item => {
+                const value = parseFloat(item.saleValue || item.totalValue || 0);
+                if (!isNaN(value)) {
+                    totalValue += value;
+                }
+            });
+            document.getElementById('totalValue').textContent = `R$ ${totalValue.toFixed(2)}`;
+            
+            // Ticket médio
+            const averageTicket = sales.length > 0 ? totalValue / sales.length : 0;
+            document.getElementById('averageTicket').textContent = `R$ ${averageTicket.toFixed(2)}`;
+        }
+        
+        // Função para atualizar tabela de últimos atendimentos
+        function updateRecentAttendances(data) {
+            // Ordenar por data (mais recentes primeiro)
+            const sortedData = [...data].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Limitar a 10 registros
+            const recentData = sortedData.slice(0, 10);
+            
+            // Atualizar tabela
+            const tableBody = document.getElementById('recentAttendancesTable');
+            tableBody.innerHTML = '';
+            
+            recentData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Data/Hora
+                const date = new Date(item.timestamp);
+                const dateCell = document.createElement('td');
+                dateCell.textContent = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                row.appendChild(dateCell);
+                
+                // Cliente
+                const clientCell = document.createElement('td');
+                clientCell.textContent = item.clientName || 'N/A';
+                row.appendChild(clientCell);
+                
+                // Atendente
+                const attendantCell = document.createElement('td');
+                attendantCell.textContent = item.attendantName || 'N/A';
+                row.appendChild(attendantCell);
+                
+                // Setor
+                const sectorCell = document.createElement('td');
+                const sectors = {
+                    'loja_fisica': 'Loja Física',
+                    'whatsapp_instagram': 'WhatsApp/Instagram',
+                    'caixa': 'Caixa'
+                };
+                sectorCell.textContent = sectors[item.sector] || item.sector || 'N/A';
+                row.appendChild(sectorCell);
+                
+                // Tipo
+                const typeCell = document.createElement('td');
+                typeCell.textContent = item.attendanceTypeName || item.operationTypeName || item.interactionTypeName || 'N/A';
+                row.appendChild(typeCell);
+                
+                // Valor
+                const valueCell = document.createElement('td');
+                const value = parseFloat(item.saleValue || item.totalValue || 0);
+                valueCell.textContent = !isNaN(value) && value > 0 ? `R$ ${value.toFixed(2)}` : 'N/A';
+                row.appendChild(valueCell);
+                
+                tableBody.appendChild(row);
+            });
+            
+            if (recentData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+            }
+        }
+        
+        // Função para atualizar tabela de clientes
+        function updateClientsTable(data) {
+            // Agrupar dados por cliente
+            const clientsMap = new Map();
+            
+            data.forEach(item => {
+                if (!item.clientName) return;
+                
+                const clientName = item.clientName.toLowerCase();
+                
+                if (!clientsMap.has(clientName)) {
+                    clientsMap.set(clientName, {
+                        name: item.clientName,
+                        contact: item.clientContact || 'N/A',
+                        attendances: 0,
+                        purchases: 0,
+                        totalValue: 0,
+                        lastAttendance: new Date(item.timestamp)
+                    });
+                }
+                
+                const client = clientsMap.get(clientName);
+                client.attendances++;
+                
+                // Verificar se é uma compra
+                const isPurchase = (item.attendanceType === 'sale_completed' || item.attendanceType === 'sale') || 
+                                  (item.operationType === 'payment') || 
+                                  (item.conversion === 'yes');
+                
+                if (isPurchase) {
+                    client.purchases++;
+                    const value = parseFloat(item.saleValue || item.totalValue || 0);
+                    if (!isNaN(value)) {
+                        client.totalValue += value;
+                    }
+                }
+                
+                // Atualizar último atendimento se for mais recente
+                const attendanceDate = new Date(item.timestamp);
+                if (attendanceDate > client.lastAttendance) {
+                    client.lastAttendance = attendanceDate;
+                }
+            });
+            
+            // Ordenar clientes por número de atendimentos (decrescente)
+            const sortedClients = [...clientsMap.values()].sort((a, b) => b.attendances - a.attendances);
+            
+            // Atualizar tabela
+            const tableBody = document.getElementById('clientsTable');
+            tableBody.innerHTML = '';
+            
+            sortedClients.forEach(client => {
+                const row = document.createElement('tr');
+                
+                // Cliente
+                const nameCell = document.createElement('td');
+                nameCell.textContent = client.name;
+                row.appendChild(nameCell);
+                
+                // Contato
+                const contactCell = document.createElement('td');
+                contactCell.textContent = client.contact;
+                row.appendChild(contactCell);
+                
+                // Atendimentos
+                const attendancesCell = document.createElement('td');
+                attendancesCell.textContent = client.attendances;
+                row.appendChild(attendancesCell);
+                
+                // Compras
+                const purchasesCell = document.createElement('td');
+                purchasesCell.textContent = client.purchases;
+                row.appendChild(purchasesCell);
+                
+                // Valor Total
+                const valueCell = document.createElement('td');
+                valueCell.textContent = `R$ ${client.totalValue.toFixed(2)}`;
+                row.appendChild(valueCell);
+                
+                // Último Atendimento
+                const lastAttendanceCell = document.createElement('td');
+                lastAttendanceCell.textContent = `${client.lastAttendance.toLocaleDateString()} ${client.lastAttendance.toLocaleTimeString()}`;
+                row.appendChild(lastAttendanceCell);
+                
+                tableBody.appendChild(row);
+            });
+            
+            if (sortedClients.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+            }
+        }
+        
+        // Função para atualizar tabela de vendas
+        function updateSalesTable(data) {
+            // Filtrar apenas vendas
+            const sales = data.filter(item => 
+                (item.attendanceType === 'sale_completed' || item.attendanceType === 'sale') || 
+                (item.operationType === 'payment') || 
+                (item.conversion === 'yes')
+            );
+            
+            // Ordenar por data (mais recentes primeiro)
+            const sortedSales = [...sales].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Atualizar tabela
+            const tableBody = document.getElementById('salesTable');
+            tableBody.innerHTML = '';
+            
+            sortedSales.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Data/Hora
+                const date = new Date(item.timestamp);
+                const dateCell = document.createElement('td');
+                dateCell.textContent = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                row.appendChild(dateCell);
+                
+                // Cliente
+                const clientCell = document.createElement('td');
+                clientCell.textContent = item.clientName || 'N/A';
+                row.appendChild(clientCell);
+                
+                // Atendente
+                const attendantCell = document.createElement('td');
+                attendantCell.textContent = item.attendantName || 'N/A';
+                row.appendChild(attendantCell);
+                
+                // Produtos
+                const productsCell = document.createElement('td');
+                productsCell.textContent = item.productsAcquired || item.productsInterest || 'N/A';
+                row.appendChild(productsCell);
+                
+                // Valor
+                const valueCell = document.createElement('td');
+                const value = parseFloat(item.saleValue || item.totalValue || 0);
+                valueCell.textContent = !isNaN(value) ? `R$ ${value.toFixed(2)}` : 'N/A';
+                row.appendChild(valueCell);
+                
+                // Forma de Pagamento
+                const paymentCell = document.createElement('td');
+                paymentCell.textContent = item.paymentMethodName || 'N/A';
+                row.appendChild(paymentCell);
+                
+                tableBody.appendChild(row);
+            });
+            
+            if (sortedSales.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+            }
+        }
+        
+        // Função para atualizar tabela de atendentes
+        function updateAttendantsTable(data) {
+            // Agrupar dados por atendente
+            const attendantsMap = new Map();
+            
+            data.forEach(item => {
+                if (!item.attendantId) return;
+                
+                const attendantId = item.attendantId;
+                
+                if (!attendantsMap.has(attendantId)) {
+                    attendantsMap.set(attendantId, {
+                        id: attendantId,
+                        name: item.attendantName,
+                        sector: item.sector,
+                        attendances: 0,
+                        sales: 0,
+                        totalValue: 0
+                    });
+                }
+                
+                const attendant = attendantsMap.get(attendantId);
+                attendant.attendances++;
+                
+                // Verificar se é uma venda
+                const isSale = (item.attendanceType === 'sale_completed' || item.attendanceType === 'sale') || 
+                              (item.operationType === 'payment') || 
+                              (item.conversion === 'yes');
+                
+                if (isSale) {
+                    attendant.sales++;
+                    const value = parseFloat(item.saleValue || item.totalValue || 0);
+                    if (!isNaN(value)) {
+                        attendant.totalValue += value;
+                    }
+                }
+            });
+            
+            // Calcular métricas adicionais
+            attendantsMap.forEach(attendant => {
+                attendant.conversionRate = attendant.attendances > 0 ? (attendant.sales / attendant.attendances) * 100 : 0;
+                attendant.averageTicket = attendant.sales > 0 ? attendant.totalValue / attendant.sales : 0;
+                
+                // Mapear setor
+                const sectors = {
+                    'loja_fisica': 'Loja Física',
+                    'whatsapp_instagram': 'WhatsApp/Instagram',
+                    'caixa': 'Caixa'
+                };
+                attendant.sectorName = sectors[attendant.sector] || attendant.sector || 'N/A';
+            });
+            
+            // Ordenar atendentes por número de vendas (decrescente)
+            const sortedAttendants = [...attendantsMap.values()].sort((a, b) => b.sales - a.sales);
+            
+            // Atualizar tabela
+            const tableBody = document.getElementById('attendantsTable');
+            tableBody.innerHTML = '';
+            
+            sortedAttendants.forEach(attendant => {
+                const row = document.createElement('tr');
+                
+                // Atendente
+                const nameCell = document.createElement('td');
+                nameCell.textContent = attendant.name;
+                row.appendChild(nameCell);
+                
+                // Setor
+                const sectorCell = document.createElement('td');
+                sectorCell.textContent = attendant.sectorName;
+                row.appendChild(sectorCell);
+                
+                // Atendimentos
+                const attendancesCell = document.createElement('td');
+                attendancesCell.textContent = attendant.attendances;
+                row.appendChild(attendancesCell);
+                
+                // Vendas
+                const salesCell = document.createElement('td');
+                salesCell.textContent = attendant.sales;
+                row.appendChild(salesCell);
+                
+                // Taxa de Conversão
+                const conversionCell = document.createElement('td');
+                conversionCell.textContent = `${attendant.conversionRate.toFixed(1)}%`;
+                row.appendChild(conversionCell);
+                
+                // Valor Total
+                const valueCell = document.createElement('td');
+                valueCell.textContent = `R$ ${attendant.totalValue.toFixed(2)}`;
+                row.appendChild(valueCell);
+                
+                // Ticket Médio
+                const ticketCell = document.createElement('td');
+                ticketCell.textContent = `R$ ${attendant.averageTicket.toFixed(2)}`;
+                row.appendChild(ticketCell);
+                
+                tableBody.appendChild(row);
+            });
+            
+            if (sortedAttendants.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+            }
+        }
+        
+        // Alternar entre abas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remover classe active de todas as abas
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Adicionar classe active na aba clicada
+                this.classList.add('active');
+                
+                // Mostrar conteúdo correspondente
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}Tab`).classList.add('active');
+            });
+        });
+        
+        // Mostrar/ocultar campos de data personalizada
+        document.getElementById('dateRangeFilter').addEventListener('change', function() {
+            const customDateGroup = document.getElementById('customDateGroup');
+            const customDateEndGroup = document.getElementById('customDateEndGroup');
+            
+            if (this.value === 'custom') {
+                customDateGroup.style.display = 'block';
+                customDateEndGroup.style.display = 'block';
+            } else {
+                customDateGroup.style.display = 'none';
+                customDateEndGroup.style.display = 'none';
+            }
+        });
+        
+        // Aplicar filtros
+        document.getElementById('applyFiltersBtn').addEventListener('click', function() {
+            // Implementar lógica de filtros aqui
+            alert('Filtros aplicados!');
+        });
+        
+        // Limpar filtros
+        document.getElementById('resetFiltersBtn').addEventListener('click', function() {
+            document.getElementById('dateRangeFilter').value = 'today';
+            document.getElementById('startDateFilter').value = '';
+            document.getElementById('endDateFilter').value = '';
+            document.getElementById('sectorFilter').value = 'all';
+            document.getElementById('attendantFilter').value = 'all';
+            
+            document.getElementById('customDateGroup').style.display = 'none';
+            document.getElementById('customDateEndGroup').style.display = 'none';
+            
+            // Recarregar dados
+            loadDashboardData();
+        });
+        
+        // Exportar dados
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            alert('Exportação de dados iniciada!');
+            // Implementar lógica de exportação aqui
+        });
+    </script>
+</body>
+</html>
