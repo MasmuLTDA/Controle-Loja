@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Clientes - Caixa</title>
+    <style>
+        :root {
+            --primary-color: #f9afb5;
+            --secondary-color: #e79aa0;
+            --accent-color: #f9afb5;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f5f5;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            max-width: 150px;
+            margin: 0 auto 10px;
+            display: block;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(249, 175, 181, 0.2);
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .success-message {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab.active {
+            border-bottom: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="Masmu-negativa.png" alt="Masmu Logo" class="logo">
+        <h1>Controle de Clientes</h1>
+        <div class="subtitle">Caixa</div>
+    </header>
+    
+    <div class="container">
+        <div class="success-message" id="successMessage">
+            Atendimento registrado com sucesso!
+        </div>
+        
+        <form id="clientForm">
+            <div class="form-group">
+                <label for="attendantId" class="required">Operador(a) de Caixa</label>
+                <select id="attendantId" name="attendantId" required>
+                    <option value="">Selecione...</option>
+                    <option value="1">Eduarda</option>
+                    <option value="2">Kaylane</option>
+                </select>
+                <div class="error-message" id="attendantIdError">Por favor, selecione o operador de caixa</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="clientName">Nome do Cliente</label>
+                <input type="text" id="clientName" name="clientName" placeholder="Nome completo">
+            </div>
+            
+            <div class="form-group">
+                <label for="operationType" class="required">Tipo de Operação</label>
+                <select id="operationType" name="operationType" required>
+                    <option value="">Selecione...</option>
+                    <option value="payment">Pagamento de compra</option>
+                    <option value="exchange">Troca</option>
+                    <option value="installment_query_whatsapp">Consulta de parcela via WhatsApp</option>
+                    <option value="installment_query_store">Consulta de parcela na loja</option>
+                    <option value="payment_booklet_whatsapp">Pagamento de carnê via WhatsApp</option>
+                    <option value="payment_booklet_store">Pagamento de carnê na loja</option>
+                </select>
+                <div class="error-message" id="operationTypeError">Por favor, selecione o tipo de operação</div>
+            </div>
+            
+            <div class="form-group" id="totalValueGroup">
+                <label for="totalValue" class="required">Valor Total (R$)</label>
+                <input type="number" id="totalValue" name="totalValue" step="0.01" min="0" placeholder="0,00" required>
+                <div class="error-message" id="totalValueError">Por favor, informe o valor total</div>
+            </div>
+            
+            <div class="form-group" id="oldProductValueGroup" style="display: none;">
+                <label for="oldProductValue">Valor do Produto Antigo (R$)</label>
+                <input type="number" id="oldProductValue" name="oldProductValue" step="0.01" min="0" placeholder="0,00">
+            </div>
+            
+            <div class="form-group" id="newProductValueGroup" style="display: none;">
+                <label for="newProductValue">Valor do Produto Novo (R$)</label>
+                <input type="number" id="newProductValue" name="newProductValue" step="0.01" min="0" placeholder="0,00">
+            </div>
+            
+            <div class="form-group" id="paymentMethodGroup">
+                <label for="paymentMethod" class="required">Forma de Pagamento</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="">Selecione...</option>
+                    <option value="cash">Dinheiro</option>
+                    <option value="credit">Cartão de Crédito</option>
+                    <option value="debit">Cartão de Débito</option>
+                    <option value="pix">PIX</option>
+                    <option value="transfer">Transferência</option>
+                    <option value="other">Outro</option>
+                </select>
+                <div class="error-message" id="paymentMethodError">Por favor, selecione a forma de pagamento</div>
+            </div>
+            
+            <div class="form-group" id="installmentsGroup" style="display: none;">
+                <label for="installments">Parcelamento</label>
+                <select id="installments" name="installments">
+                    <option value="1">À vista</option>
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="4">4x</option>
+                    <option value="5">5x</option>
+                    <option value="6">6x</option>
+                    <option value="7">7x</option>
+                    <option value="8">8x</option>
+                    <option value="9">9x</option>
+                    <option value="10">10x</option>
+                    <option value="11">11x</option>
+                    <option value="12">12x</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="clientPaidGroup" style="display: none;">
+                <label for="clientPaid">Cliente pagou?</label>
+                <select id="clientPaid" name="clientPaid">
+                    <option value="">Selecione...</option>
+                    <option value="yes">Sim</option>
+                    <option value="no">Não</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="paidValueGroup" style="display: none;">
+                <label for="paidValue">Valor Pago (R$)</label>
+                <input type="number" id="paidValue" name="paidValue" step="0.01" min="0" placeholder="0,00">
+            </div>
+            
+            <div class="form-group" id="productsOfferedGroup" style="display: none;">
+                <label for="productsOffered">Ofereceu mais produtos ao cliente?</label>
+                <select id="productsOffered" name="productsOffered">
+                    <option value="">Selecione...</option>
+                    <option value="yes">Sim</option>
+                    <option value="no">Não</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="noOfferReasonGroup" style="display: none;">
+                <label for="noOfferReason">Por que não ofereceu mais produtos?</label>
+                <select id="noOfferReason" name="noOfferReason">
+                    <option value="">Selecione...</option>
+                    <option value="no_time">Sem tempo</option>
+                    <option value="client_hurry">Cliente com pressa</option>
+                    <option value="forgot">Esqueci</option>
+                    <option value="other">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="additionalSaleGroup" style="display: none;">
+                <label for="additionalSale">Houve venda adicional?</label>
+                <select id="additionalSale" name="additionalSale">
+                    <option value="">Selecione...</option>
+                    <option value="yes">Sim</option>
+                    <option value="no">Não</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="additionalSaleValueGroup" style="display: none;">
+                <label for="additionalSaleValue">Valor da venda adicional (R$)</label>
+                <input type="number" id="additionalSaleValue" name="additionalSaleValue" step="0.01" min="0" placeholder="0,00">
+            </div>
+            
+            <div class="form-group" id="noAdditionalSaleReasonGroup" style="display: none;">
+                <label for="noAdditionalSaleReason">Motivo de não ter ocorrido venda adicional</label>
+                <select id="noAdditionalSaleReason" name="noAdditionalSaleReason">
+                    <option value="">Selecione...</option>
+                    <option value="price">Preço</option>
+                    <option value="not_interested">Cliente não interessado</option>
+                    <option value="no_need">Cliente sem necessidade</option>
+                    <option value="other">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="productsAcquiredGroup" style="display: none;">
+                <label for="productsAcquired">Produtos Adquiridos</label>
+                <textarea id="productsAcquired" name="productsAcquired" rows="3" placeholder="Lista de itens comprados"></textarea>
+            </div>
+            
+            <div class="form-group" id="discountAppliedGroup" style="display: none;">
+                <label for="discountApplied">Cupom/Desconto Aplicado</label>
+                <input type="text" id="discountApplied" name="discountApplied" placeholder="Se houve algum desconto">
+            </div>
+            
+            <div class="form-group" id="clientRegisteredGroup" style="display: none;">
+                <label for="clientRegistered">Cliente Cadastrado</label>
+                <select id="clientRegistered" name="clientRegistered">
+                    <option value="">Selecione...</option>
+                    <option value="yes">Sim</option>
+                    <option value="no">Não</option>
+                    <option value="new">Novo cadastro realizado</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="observations">Observações</label>
+                <textarea id="observations" name="observations" rows="3" placeholder="Informações adicionais relevantes"></textarea>
+            </div>
+            
+            <button type="submit">Registrar Atendimento</button>
+        </form>
+        
+        <div class="footer">
+            Sistema de Controle de Clientes © 2025
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBP7vj2eaIt5t49PIWRxfGXOVehkNIbJk",
+            authDomain: "controle-loja-9c606.firebaseapp.com",
+            projectId: "controle-loja-9c606",
+            storageBucket: "controle-loja-9c606.firebasestorage.app",
+            messagingSenderId: "291893265962",
+            appId: "1:291893265962:web:3d2405ada39406df40a553",
+            databaseURL: "https://controle-loja-9c606-default-rtdb.firebaseio.com"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Mostrar/ocultar campos com base no tipo de operação
+        document.getElementById('operationType').addEventListener('change', function() {
+            // Obter referências a todos os grupos de campos
+            const totalValueGroup = document.getElementById('totalValueGroup');
+            const oldProductValueGroup = document.getElementById('oldProductValueGroup');
+            const newProductValueGroup = document.getElementById('newProductValueGroup');
+            const paymentMethodGroup = document.getElementById('paymentMethodGroup');
+            const productsOfferedGroup = document.getElementById('productsOfferedGroup');
+            const installmentsGroup = document.getElementById('installmentsGroup');
+            const clientPaidGroup = document.getElementById('clientPaidGroup');
+            const paidValueGroup = document.getElementById('paidValueGroup');
+            const productsAcquiredGroup = document.getElementById('productsAcquiredGroup');
+            const discountAppliedGroup = document.getElementById('discountAppliedGroup');
+            const clientRegisteredGroup = document.getElementById('clientRegisteredGroup');
+            const additionalSaleGroup = document.getElementById('additionalSaleGroup');
+            const additionalSaleValueGroup = document.getElementById('additionalSaleValueGroup');
+            const noAdditionalSaleReasonGroup = document.getElementById('noAdditionalSaleReasonGroup');
+            const noOfferReasonGroup = document.getElementById('noOfferReasonGroup');
+            
+            // Esconder todos os grupos primeiro
+            oldProductValueGroup.style.display = 'none';
+            newProductValueGroup.style.display = 'none';
+            installmentsGroup.style.display = 'none';
+            clientPaidGroup.style.display = 'none';
+            paidValueGroup.style.display = 'none';
+            productsOfferedGroup.style.display = 'none';
+            noOfferReasonGroup.style.display = 'none';
+            additionalSaleGroup.style.display = 'none';
+            additionalSaleValueGroup.style.display = 'none';
+            noAdditionalSaleReasonGroup.style.display = 'none';
+            productsAcquiredGroup.style.display = 'none';
+            discountAppliedGroup.style.display = 'none';
+            clientRegisteredGroup.style.display = 'none';
+            
+            // Mostrar grupos relevantes com base no tipo de operação
+            if (this.value === 'payment') {
+                totalValueGroup.style.display = 'block';
+                paymentMethodGroup.style.display = 'block';
+                productsAcquiredGroup.style.display = 'block';
+                discountAppliedGroup.style.display = 'block';
+                clientRegisteredGroup.style.display = 'block';
+            } 
+            else if (this.value === 'exchange') {
+                totalValueGroup.style.display = 'block';
+                oldProductValueGroup.style.display = 'block';
+                newProductValueGroup.style.display = 'block';
+                paymentMethodGroup.style.display = 'block';
+            } 
+            else if (this.value === 'installment_query_whatsapp') {
+                totalValueGroup.style.display = 'none';
+                paymentMethodGroup.style.display = 'none';
+                clientPaidGroup.style.display = 'block';
+            } 
+            else if (this.value === 'installment_query_store') {
+                totalValueGroup.style.display = 'none';
+                paymentMethodGroup.style.display = 'none';
+                productsOfferedGroup.style.display = 'block';
+            } 
+            else if (this.value === 'payment_booklet_whatsapp') {
+                totalValueGroup.style.display = 'block';
+                paymentMethodGroup.style.display = 'block';
+                clientPaidGroup.style.display = 'block';
+            } 
+            else if (this.value === 'payment_booklet_store') {
+                totalValueGroup.style.display = 'block';
+                paymentMethodGroup.style.display = 'block';
+                productsOfferedGroup.style.display = 'block';
+            }
+            
+            // Resetar campos que foram escondidos
+            if (totalValueGroup.style.display === 'none') {
+                document.getElementById('totalValue').value = '';
+            }
+            if (paymentMethodGroup.style.display === 'none') {
+                document.getElementById('paymentMethod').value = '';
+            }
+        });
+        
+        // Mostrar/ocultar parcelamento com base na forma de pagamento
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            const installmentsGroup = document.getElementById('installmentsGroup');
+            
+            if (this.value === 'credit') {
+                installmentsGroup.style.display = 'block';
+            } else {
+                installmentsGroup.style.display = 'none';
+                document.getElementById('installments').value = '1';
+            }
+        });
+        
+        // Mostrar/ocultar valor pago com base no cliente pagou
+        document.getElementById('clientPaid').addEventListener('change', function() {
+            const paidValueGroup = document.getElementById('paidValueGroup');
+            
+            if (this.value === 'yes') {
+                paidValueGroup.style.display = 'block';
+            } else {
+                paidValueGroup.style.display = 'none';
+                document.getElementById('paidValue').value = '';
+            }
+        });
+        
+        // Mostrar/ocultar campos com base em ofereceu mais produtos
+        document.getElementById('productsOffered').addEventListener('change', function() {
+            const additionalSaleGroup = document.getElementById('additionalSaleGroup');
+            const noOfferReasonGroup = document.getElementById('noOfferReasonGroup');
+            
+            additionalSaleGroup.style.display = 'none';
+            noOfferReasonGroup.style.display = 'none';
+            
+            if (this.value === 'yes') {
+                additionalSaleGroup.style.display = 'block';
+            } else if (this.value === 'no') {
+                noOfferReasonGroup.style.display = 'block';
+            }
+        });
+        
+        // Mostrar/ocultar campos com base em houve venda adicional
+        document.getElementById('additionalSale').addEventListener('change', function() {
+            const additionalSaleValueGroup = document.getElementById('additionalSaleValueGroup');
+            const noAdditionalSaleReasonGroup = document.getElementById('noAdditionalSaleReasonGroup');
+            
+            additionalSaleValueGroup.style.display = 'none';
+            noAdditionalSaleReasonGroup.style.display = 'none';
+            
+            if (this.value === 'yes') {
+                additionalSaleValueGroup.style.display = 'block';
+            } else if (this.value === 'no') {
+                noAdditionalSaleReasonGroup.style.display = 'block';
+            }
+        });
+        
+        // Validação do formulário
+        document.getElementById('clientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true;
+            
+            // Validar campos obrigatórios
+            const attendantId = document.getElementById('attendantId');
+            const operationType = document.getElementById('operationType');
+            const totalValue = document.getElementById('totalValue');
+            const paymentMethod = document.getElementById('paymentMethod');
+            
+            if (!attendantId.value) {
+                document.getElementById('attendantIdError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('attendantIdError').style.display = 'none';
+            }
+            
+            if (!operationType.value) {
+                document.getElementById('operationTypeError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('operationTypeError').style.display = 'none';
+            }
+            
+            // Validar valor total apenas se o grupo estiver visível
+            if (document.getElementById('totalValueGroup').style.display !== 'none') {
+                if (!totalValue.value) {
+                    document.getElementById('totalValueError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('totalValueError').style.display = 'none';
+                }
+            }
+            
+            // Validar forma de pagamento apenas se o grupo estiver visível
+            if (document.getElementById('paymentMethodGroup').style.display !== 'none') {
+                if (!paymentMethod.value) {
+                    document.getElementById('paymentMethodError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('paymentMethodError').style.display = 'none';
+                }
+            }
+            
+            if (isValid) {
+                // Coletar todos os dados do formulário
+                const formData = {
+                    attendantId: attendantId.value,
+                    attendantName: attendantId.options[attendantId.selectedIndex].text,
+                    clientName: document.getElementById('clientName').value,
+                    operationType: operationType.value,
+                    operationTypeName: operationType.options[operationType.selectedIndex].text,
+                    totalValue: totalValue.value || "0",
+                    oldProductValue: document.getElementById('oldProductValue').value || "0",
+                    newProductValue: document.getElementById('newProductValue').value || "0",
+                    paymentMethod: paymentMethod.value,
+                    paymentMethodName: paymentMethod.value ? paymentMethod.options[paymentMethod.selectedIndex].text : "",
+                    installments: document.getElementById('installments').value,
+                    clientPaid: document.getElementById('clientPaid').value,
+                    clientPaidName: document.getElementById('clientPaid').value ? 
+                        document.getElementById('clientPaid').options[document.getElementById('clientPaid').selectedIndex].text : "",
+                    paidValue: document.getElementById('paidValue').value || "0",
+                    productsOffered: document.getElementById('productsOffered').value,
+                    productsOfferedName: document.getElementById('productsOffered').value ? 
+                        document.getElementById('productsOffered').options[document.getElementById('productsOffered').selectedIndex].text : "",
+                    noOfferReason: document.getElementById('noOfferReason').value,
+                    noOfferReasonName: document.getElementById('noOfferReason').value ? 
+                        document.getElementById('noOfferReason').options[document.getElementById('noOfferReason').selectedIndex].text : "",
+                    additionalSale: document.getElementById('additionalSale').value,
+                    additionalSaleName: document.getElementById('additionalSale').value ? 
+                        document.getElementById('additionalSale').options[document.getElementById('additionalSale').selectedIndex].text : "",
+                    additionalSaleValue: document.getElementById('additionalSaleValue').value || "0",
+                    noAdditionalSaleReason: document.getElementById('noAdditionalSaleReason').value,
+                    noAdditionalSaleReasonName: document.getElementById('noAdditionalSaleReason').value ? 
+                        document.getElementById('noAdditionalSaleReason').options[document.getElementById('noAdditionalSaleReason').selectedIndex].text : "",
+                    productsAcquired: document.getElementById('productsAcquired').value,
+                    discountApplied: document.getElementById('discountApplied').value,
+                    clientRegistered: document.getElementById('clientRegistered').value,
+                    clientRegisteredName: document.getElementById('clientRegistered').value ? 
+                        document.getElementById('clientRegistered').options[document.getElementById('clientRegistered').selectedIndex].text : "",
+                    observations: document.getElementById('observations').value,
+                    timestamp: new Date().toISOString(),
+                    sector: 'caixa'
+                };
+                
+                // Salvar dados no Firebase
+                const newDataRef = database.ref('clientData').push();
+                newDataRef.set(formData)
+                    .then(() => {
+                        console.log('Dados salvos com sucesso no Firebase');
+                        
+                        // Mostrar mensagem de sucesso
+                        document.getElementById('successMessage').style.display = 'block';
+                        
+                        // Limpar o formulário após 2 segundos
+                        setTimeout(function() {
+                            document.getElementById('clientForm').reset();
+                            document.getElementById('successMessage').style.display = 'none';
+                            
+                            // Esconder todos os grupos opcionais
+                            document.getElementById('oldProductValueGroup').style.display = 'none';
+                            document.getElementById('newProductValueGroup').style.display = 'none';
+                            document.getElementById('installmentsGroup').style.display = 'none';
+                            document.getElementById('clientPaidGroup').style.display = 'none';
+                            document.getElementById('paidValueGroup').style.display = 'none';
+                            document.getElementById('productsOfferedGroup').style.display = 'none';
+                            document.getElementById('noOfferReasonGroup').style.display = 'none';
+                            document.getElementById('additionalSaleGroup').style.display = 'none';
+                            document.getElementById('additionalSaleValueGroup').style.display = 'none';
+                            document.getElementById('noAdditionalSaleReasonGroup').style.display = 'none';
+                            document.getElementById('productsAcquiredGroup').style.display = 'none';
+                            document.getElementById('discountAppliedGroup').style.display = 'none';
+                            document.getElementById('clientRegisteredGroup').style.display = 'none';
+                        }, 2000);
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao salvar dados:', error);
+                        alert('Erro ao salvar dados. Por favor, tente novamente.');
+                    });
+                
+                // Também salvar no localStorage como backup
+                let allData = JSON.parse(localStorage.getItem('clientData')) || [];
+                allData.push({
+                    id: newDataRef.key,
+                    ...formData
+                });
+                localStorage.setItem('clientData', JSON.stringify(allData));
+            }
+        });
+    </script>
+</body>
+</html>

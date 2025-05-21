@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Controle de Clientes</title>
+    <style>
+        :root {
+            --primary-color: #f9afb5;
+            --secondary-color: #e79aa0;
+            --accent-color: #f9afb5;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f5f5;
+            padding: 0;
+            margin: 0;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            max-width: 120px;
+            margin-right: 15px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-name {
+            margin-right: 15px;
+        }
+        
+        .logout-btn {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .filters {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-export {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .page-item {
+            margin: 0 5px;
+        }
+        
+        .page-link {
+            display: block;
+            padding: 5px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .page-link:hover {
+            background-color: #e9ecef;
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Modal de detalhes */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            width: 200px;
+            min-width: 200px;
+        }
+        
+        .detail-value {
+            flex: 1;
+        }
+        
+        .view-details-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .view-details-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+            }
+            
+            .detail-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="Masmu-negativa.png" alt="Masmu Logo" class="logo">
+            <div class="logo-text">Sistema de Controle de Clientes</div>
+        </div>
+        <div class="user-info">
+            <span class="user-name" id="userName">Administrador</span>
+            <button class="logout-btn" id="logoutBtn">Voltar</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1>Painel Administrativo</h1>
+        <p>Bem-vindo ao painel administrativo do Sistema de Controle de Clientes.</p>
+        
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-title">Total de Clientes</div>
+                <div class="card-value" id="totalClients">0</div>
+                <div class="card-subtitle">Clientes atendidos</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Total de Vendas</div>
+                <div class="card-value" id="totalSales">0</div>
+                <div class="card-subtitle">Vendas concluídas</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Valor Total</div>
+                <div class="card-value" id="totalValue">R$ 0,00</div>
+                <div class="card-subtitle">Em vendas</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Ticket Médio</div>
+                <div class="card-value" id="averageTicket">R$ 0,00</div>
+                <div class="card-subtitle">Por venda</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="recent">Últimos Atendimentos</div>
+            <div class="tab" data-tab="clients">Clientes</div>
+            <div class="tab" data-tab="sales">Vendas</div>
+            <div class="tab" data-tab="attendants">Atendentes</div>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="dateRangeFilter">Período</label>
+                    <select id="dateRangeFilter">
+                        <option value="today" selected>Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="last7days">Últimos 7 dias</option>
+                        <option value="last30days">Últimos 30 dias</option>
+                        <option value="thisMonth">Este mês</option>
+                        <option value="lastMonth">Mês passado</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group" id="customDateGroup" style="display: none;">
+                    <label for="startDateFilter">Data Inicial</label>
+                    <input type="date" id="startDateFilter">
+                </div>
+                
+                <div class="filter-group" id="customDateEndGroup" style="display: none;">
+                    <label for="endDateFilter">Data Final</label>
+                    <input type="date" id="endDateFilter">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="sectorFilter">Setor</label>
+                    <select id="sectorFilter">
+                        <option value="all" selected>Todos</option>
+                        <option value="loja_fisica">Loja Física</option>
+                        <option value="social_media">WhatsApp/Instagram</option>
+                        <option value="caixa">Caixa</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="attendantFilter">Atendente</label>
+                    <select id="attendantFilter">
+                        <option value="all" selected>Todos</option>
+                        <option value="1">Daniela</option>
+                        <option value="2">Kaylane</option>
+                        <option value="3">Fabiola</option>
+                        <option value="4">Eduarda</option>
+                        <option value="5">Daniel</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-buttons">
+                <button class="btn btn-secondary" id="resetFiltersBtn">Limpar Filtros</button>
+                <button class="btn btn-primary" id="applyFiltersBtn">Aplicar Filtros</button>
+                <button class="btn btn-export" id="exportBtn">Exportar Dados</button>
+            </div>
+        </div>
+        
+        <div class="tab-content active" id="recentTab">
+            <h2>Últimos Atendimentos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Atendente</th>
+                        <th>Setor</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="recentAttendancesTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="clientsTab">
+            <h2>Clientes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Contato</th>
+                        <th>Atendimentos</th>
+                        <th>Compras</th>
+                        <th>Valor Total</th>
+                        <th>Último Atendimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="salesTab">
+            <h2>Vendas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Atendente</th>
+                        <th>Produtos</th>
+                        <th>Valor</th>
+                        <th>Forma de Pagamento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="attendantsTab">
+            <h2>Desempenho dos Atendentes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Atendente</th>
+                        <th>Setor</th>
+                        <th>Atendimentos</th>
+                        <th>Vendas</th>
+                        <th>Taxa de Conversão</th>
+                        <th>Valor Total</th>
+                        <th>Ticket Médio</th>
+                    </tr>
+                </thead>
+                <tbody id="attendantsTable">
+                    <!-- Dados serão carregados dinamicamente -->
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal de Detalhes -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Detalhes do Atendimento</h2>
+            <div id="detailsContent">
+                <!-- Conteúdo será preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBP7vj2eaIt5t49PIWRxfGXOVehkNIbJk",
+            authDomain: "controle-loja-9c606.firebaseapp.com",
+            projectId: "controle-loja-9c606",
+            storageBucket: "controle-loja-9c606.firebasestorage.app",
+            messagingSenderId: "291893265962",
+            appId: "1:291893265962:web:3d2405ada39406df40a553",
+            databaseURL: "https://controle-loja-9c606-default-rtdb.firebaseio.com"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Referência para o modal de detalhes
+        const modal = document.getElementById('detailsModal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+        
+        // Fechar o modal quando clicar no X
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        };
+        
+        // Fechar o modal quando clicar fora dele
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+        
+        // Função para mostrar detalhes do atendimento
+        function showDetails(recordId) {
+            database.ref('clientData/' + recordId).once('value')
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        let detailsHTML = '';
+                        
+                        // Informações básicas
+                        detailsHTML += createDetailRow('Data/Hora', formatDateTime(data.timestamp));
+                        detailsHTML += createDetailRow('Cliente', data.clientName || 'Não informado');
+                        detailsHTML += createDetailRow('Atendente', data.attendantName || 'Não informado');
+                        detailsHTML += createDetailRow('Setor', getSectorName(data.sector));
+                        
+                        // Informações específicas por tipo de atendimento
+                        if (data.sector === 'loja_fisica') {
+                            detailsHTML += createDetailRow('Tipo de Atendimento', data.attendanceTypeName || 'Não informado');
+                            
+                            if (data.attendanceType === 'sale_completed') {
+                                detailsHTML += createDetailRow('Produto Vendido', data.productSold || 'Não informado');
+                                detailsHTML += createDetailRow('Valor da Venda', formatCurrency(data.saleValue));
+                            } 
+                            else if (data.attendanceType === 'sale_not_completed') {
+                                detailsHTML += createDetailRow('Produto de Interesse', data.productsInterest || 'Não informado');
+                                detailsHTML += createDetailRow('Motivo da Não Conclusão', data.notCompletedReason || 'Não informado');
+                            } 
+                            else if (data.attendanceType === 'exchange') {
+                                detailsHTML += createDetailRow('Produto da Troca', data.exchangeProduct || 'Não informado');
+                                detailsHTML += createDetailRow('Tipo de Troca', data.exchangeType || 'Não informado');
+                                
+                                if (data.exchangeType === 'size') {
+                                    detailsHTML += createDetailRow('Tamanho Original', data.originalSize || 'Não informado');
+                                    detailsHTML += createDetailRow('Novo Tamanho', data.newSize || 'Não informado');
+                                } 
+                                else if (data.exchangeType === 'other_product') {
+                                    detailsHTML += createDetailRow('Novo Produto', data.newProduct || 'Não informado');
+                                }
+                                
+                                detailsHTML += createDetailRow('Agregou Mais Produtos', data.addedMoreProducts ? 'Sim' : 'Não');
+                                
+                                if (data.addedMoreProducts) {
+                                    detailsHTML += createDetailRow('Valor Adicional', formatCurrency(data.additionalValue));
+                                }
+                            } 
+                            else if (data.attendanceType === 'fitting') {
+                                detailsHTML += createDetailRow('Produto para Prova', data.productsInterest || 'Não informado');
+                                detailsHTML += createDetailRow('Valor da Prova', formatCurrency(data.fittingValue));
+                            }
+                        } 
+                        else if (data.sector === 'social_media') {
+                            detailsHTML += createDetailRow('Canal', data.channelName || 'Não informado');
+                            detailsHTML += createDetailRow('Tipo de Interação', data.interactionTypeName || 'Não informado');
+                            detailsHTML += createDetailRow('Produtos de Interesse', data.productsInterest || 'Não informado');
+                            
+                            if (data.interactionType === 'purchase') {
+                                detailsHTML += createDetailRow('Valor da Venda', formatCurrency(data.saleValue));
+                                detailsHTML += createDetailRow('Forma de Pagamento', data.paymentMethodName || 'Não informado');
+                                
+                                if (data.paymentMethod === 'credit') {
+                                    detailsHTML += createDetailRow('Parcelamento', data.installments + 'x');
+                                }
+                            }
+                            
+                            detailsHTML += createDetailRow('Cliente Cadastrado', data.clientRegisteredName || 'Não informado');
+                        } 
+                        else if (data.sector === 'caixa') {
+                            detailsHTML += createDetailRow('Tipo de Operação', data.operationTypeName || 'Não informado');
+                            
+                            if (data.operationType === 'payment') {
+                                detailsHTML += createDetailRow('Valor Total', formatCurrency(data.totalValue));
+                                detailsHTML += createDetailRow('Forma de Pagamento', data.paymentMethodName || 'Não informado');
+                                detailsHTML += createDetailRow('Produtos Adquiridos', data.productsAcquired || 'Não informado');
+                                detailsHTML += createDetailRow('Desconto Aplicado', data.discountApplied || 'Nenhum');
+                            } 
+                            else if (data.operationType === 'exchange') {
+                                detailsHTML += createDetailRow('Valor Total', formatCurrency(data.totalValue));
+                                detailsHTML += createDetailRow('Valor do Produto Antigo', formatCurrency(data.oldProductValue));
+                                detailsHTML += createDetailRow('Valor do Produto Novo', formatCurrency(data.newProductValue));
+                                detailsHTML += createDetailRow('Forma de Pagamento', data.paymentMethodName || 'Não informado');
+                            } 
+                            else if (data.operationType === 'installment_query_whatsapp') {
+                                detailsHTML += createDetailRow('Cliente Pagou', data.clientPaidName || 'Não informado');
+                                
+                                if (data.clientPaid === 'yes') {
+                                    detailsHTML += createDetailRow('Valor Pago', formatCurrency(data.paidValue));
+                                }
+                            } 
+                            else if (data.operationType === 'installment_query_store') {
+                                detailsHTML += createDetailRow('Ofereceu Mais Produtos', data.productsOfferedName || 'Não informado');
+                                
+                                if (data.productsOffered === 'yes') {
+                                    detailsHTML += createDetailRow('Houve Venda Adicional', data.additionalSaleName || 'Não informado');
+                                    
+                                    if (data.additionalSale === 'yes') {
+                                        detailsHTML += createDetailRow('Valor da Venda Adicional', formatCurrency(data.additionalSaleValue));
+                                    } else {
+                                        detailsHTML += createDetailRow('Motivo da Não Venda', data.noAdditionalSaleReasonName || 'Não informado');
+                                    }
+                                } else {
+                                    detailsHTML += createDetailRow('Por que Não Ofereceu', data.noOfferReasonName || 'Não informado');
+                                }
+                            } 
+                            else if (data.operationType === 'payment_booklet_whatsapp') {
+                                detailsHTML += createDetailRow('Valor Total', formatCurrency(data.totalValue));
+                                detailsHTML += createDetailRow('Forma de Pagamento', data.paymentMethodName || 'Não informado');
+                                detailsHTML += createDetailRow('Cliente Pagou', data.clientPaidName || 'Não informado');
+                                
+                                if (data.clientPaid === 'yes') {
+                                    detailsHTML += createDetailRow('Valor Pago', formatCurrency(data.paidValue));
+                                }
+                            } 
+                            else if (data.operationType === 'payment_booklet_store') {
+                                detailsHTML += createDetailRow('Valor Total', formatCurrency(data.totalValue));
+                                detailsHTML += createDetailRow('Forma de Pagamento', data.paymentMethodName || 'Não informado');
+                                detailsHTML += createDetailRow('Ofereceu Mais Produtos', data.productsOfferedName || 'Não informado');
+                                
+                                if (data.productsOffered === 'yes') {
+                                    detailsHTML += createDetailRow('Houve Venda Adicional', data.additionalSaleName || 'Não informado');
+                                    
+                                    if (data.additionalSale === 'yes') {
+                                        detailsHTML += createDetailRow('Valor da Venda Adicional', formatCurrency(data.additionalSaleValue));
+                                    } else {
+                                        detailsHTML += createDetailRow('Motivo da Não Venda', data.noAdditionalSaleReasonName || 'Não informado');
+                                    }
+                                } else {
+                                    detailsHTML += createDetailRow('Por que Não Ofereceu', data.noOfferReasonName || 'Não informado');
+                                }
+                            }
+                        }
+                        
+                        // Observações
+                        detailsHTML += createDetailRow('Observações', data.observations || 'Nenhuma observação');
+                        
+                        // Preencher o conteúdo do modal
+                        document.getElementById('detailsContent').innerHTML = detailsHTML;
+                        
+                        // Mostrar o modal
+                        modal.style.display = 'block';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao buscar detalhes:', error);
+                    alert('Erro ao buscar detalhes do atendimento.');
+                });
+        }
+        
+        // Função auxiliar para criar uma linha de detalhes
+        function createDetailRow(label, value) {
+            return `
+                <div class="detail-row">
+                    <div class="detail-label">${label}:</div>
+                    <div class="detail-value">${value}</div>
+                </div>
+            `;
+        }
+        
+        // Função para formatar data e hora
+        function formatDateTime(timestamp) {
+            if (!timestamp) return 'Data não disponível';
+            
+            const date = new Date(timestamp);
+            return date.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Função para formatar valores monetários
+        function formatCurrency(value) {
+            if (!value) return 'R$ 0,00';
+            
+            const numValue = parseFloat(value);
+            return numValue.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+        
+        // Função para obter o nome do setor
+        function getSectorName(sector) {
+            const sectors = {
+                'loja_fisica': 'Loja Física',
+                'social_media': 'WhatsApp/Instagram',
+                'caixa': 'Caixa'
+            };
+            
+            return sectors[sector] || sector;
+        }
+        
+        // Função para carregar dados do Firebase
+        function loadData() {
+            database.ref('clientData').once('value')
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        // Converter objeto em array
+                        const dataArray = Object.entries(data).map(([key, value]) => ({
+                            id: key,
+                            ...value
+                        }));
+                        
+                        // Ordenar por data (mais recente primeiro)
+                        dataArray.sort((a, b) => {
+                            return new Date(b.timestamp) - new Date(a.timestamp);
+                        });
+                        
+                        // Atualizar estatísticas
+                        updateStatistics(dataArray);
+                        
+                        // Preencher tabelas
+                        fillRecentAttendancesTable(dataArray);
+                        fillClientsTable(dataArray);
+                        fillSalesTable(dataArray);
+                        fillAttendantsTable(dataArray);
+                    } else {
+                        // Sem dados
+                        document.getElementById('recentAttendancesTable').innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                        document.getElementById('clientsTable').innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                        document.getElementById('salesTable').innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                        document.getElementById('attendantsTable').innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum dado encontrado</td></tr>';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar dados:', error);
+                    alert('Erro ao carregar dados do Firebase.');
+                });
+        }
+        
+        // Função para atualizar estatísticas
+        function updateStatistics(dataArray) {
+            // Total de clientes únicos
+            const uniqueClients = new Set();
+            dataArray.forEach(item => {
+                if (item.clientName) {
+                    uniqueClients.add(item.clientName.toLowerCase());
+                }
+            });
+            document.getElementById('totalClients').textContent = uniqueClients.size;
+            
+            // Total de vendas
+            const sales = dataArray.filter(item => 
+                (item.sector === 'loja_fisica' && item.attendanceType === 'sale_completed') || 
+                (item.sector === 'social_media' && item.interactionType === 'purchase') ||
+                (item.sector === 'caixa' && item.operationType === 'payment')
+            );
+            document.getElementById('totalSales').textContent = sales.length;
+            
+            // Valor total
+            let totalValue = 0;
+            sales.forEach(item => {
+                if (item.sector === 'loja_fisica') {
+                    totalValue += parseFloat(item.saleValue || 0);
+                } else if (item.sector === 'social_media') {
+                    totalValue += parseFloat(item.saleValue || 0);
+                } else if (item.sector === 'caixa') {
+                    totalValue += parseFloat(item.totalValue || 0);
+                }
+            });
+            document.getElementById('totalValue').textContent = formatCurrency(totalValue);
+            
+            // Ticket médio
+            const averageTicket = sales.length > 0 ? totalValue / sales.length : 0;
+            document.getElementById('averageTicket').textContent = formatCurrency(averageTicket);
+        }
+        
+        // Função para preencher a tabela de atendimentos recentes
+        function fillRecentAttendancesTable(dataArray) {
+            let html = '';
+            
+            dataArray.slice(0, 20).forEach(item => {
+                let type = '';
+                let value = '';
+                
+                if (item.sector === 'loja_fisica') {
+                    type = item.attendanceTypeName || '';
+                    value = item.attendanceType === 'sale_completed' ? formatCurrency(item.saleValue) : '';
+                } else if (item.sector === 'social_media') {
+                    type = item.interactionTypeName || '';
+                    value = item.interactionType === 'purchase' ? formatCurrency(item.saleValue) : '';
+                } else if (item.sector === 'caixa') {
+                    type = item.operationTypeName || '';
+                    value = item.operationType === 'payment' || item.operationType === 'exchange' ? formatCurrency(item.totalValue) : '';
+                }
+                
+                html += `
+                    <tr>
+                        <td>${formatDateTime(item.timestamp)}</td>
+                        <td>${item.clientName || 'Não informado'}</td>
+                        <td>${item.attendantName || 'Não informado'}</td>
+                        <td>${getSectorName(item.sector)}</td>
+                        <td>${type}</td>
+                        <td>${value}</td>
+                        <td><button class="view-details-btn" onclick="showDetails('${item.id}')">Ver Detalhes</button></td>
+                    </tr>
+                `;
+            });
+            
+            if (html === '') {
+                html = '<tr><td colspan="7" style="text-align: center;">Nenhum atendimento recente</td></tr>';
+            }
+            
+            document.getElementById('recentAttendancesTable').innerHTML = html;
+        }
+        
+        // Função para preencher a tabela de clientes
+        function fillClientsTable(dataArray) {
+            // Agrupar por cliente
+            const clientsMap = new Map();
+            
+            dataArray.forEach(item => {
+                if (!item.clientName) return;
+                
+                const clientName = item.clientName.toLowerCase();
+                
+                if (!clientsMap.has(clientName)) {
+                    clientsMap.set(clientName, {
+                        name: item.clientName,
+                        contact: item.clientContact || '',
+                        attendances: 0,
+                        purchases: 0,
+                        totalValue: 0,
+                        lastAttendance: item.timestamp,
+                        records: []
+                    });
+                }
+                
+                const client = clientsMap.get(clientName);
+                client.attendances++;
+                client.records.push(item);
+                
+                // Atualizar última data de atendimento
+                if (new Date(item.timestamp) > new Date(client.lastAttendance)) {
+                    client.lastAttendance = item.timestamp;
+                }
+                
+                // Verificar se é uma compra
+                let isPurchase = false;
+                let purchaseValue = 0;
+                
+                if (item.sector === 'loja_fisica' && item.attendanceType === 'sale_completed') {
+                    isPurchase = true;
+                    purchaseValue = parseFloat(item.saleValue || 0);
+                } else if (item.sector === 'social_media' && item.interactionType === 'purchase') {
+                    isPurchase = true;
+                    purchaseValue = parseFloat(item.saleValue || 0);
+                } else if (item.sector === 'caixa' && item.operationType === 'payment') {
+                    isSearch = true;
+                    purchaseValue = parseFloat(item.totalValue || 0);
+                }
+                
+                if (isSearch) {
+                    client.purchases++;
+                    client.totalValue += purchaseValue;
+                }
+            });
+            
+            // Converter para array e ordenar por número de atendimentos
+            const clientsArray = Array.from(clientsMap.values());
+            clientsArray.sort((a, b) => b.attendances - a.attendances);
+            
+            let html = '';
+            
+            clientsArray.forEach(client => {
+                html += `
+                    <tr>
+                        <td>${client.name}</td>
+                        <td>${client.contact || 'Não informado'}</td>
+                        <td>${client.attendances}</td>
+                        <td>${client.purchases}</td>
+                        <td>${formatCurrency(client.totalValue)}</td>
+                        <td>${formatDateTime(client.lastAttendance)}</td>
+                        <td><button class="view-details-btn" onclick="showDetails('${client.records[0].id}')">Ver Detalhes</button></td>
+                    </tr>
+                `;
+            });
+            
+            if (html === '') {
+                html = '<tr><td colspan="7" style="text-align: center;">Nenhum cliente encontrado</td></tr>';
+            }
+            
+            document.getElementById('clientsTable').innerHTML = html;
+        }
+        
+        // Função para preencher a tabela de vendas
+        function fillSalesTable(dataArray) {
+            // Filtrar apenas vendas
+            const sales = dataArray.filter(item => 
+                (item.sector === 'loja_fisica' && item.attendanceType === 'sale_completed') || 
+                (item.sector === 'social_media' && item.interactionType === 'purchase') ||
+                (item.sector === 'caixa' && item.operationType === 'payment')
+            );
+            
+            let html = '';
+            
+            sales.forEach(item => {
+                let products = '';
+                let value = '';
+                let paymentMethod = '';
+                
+                if (item.sector === 'loja_fisica') {
+                    products = item.productSold || 'Não informado';
+                    value = formatCurrency(item.saleValue);
+                    paymentMethod = item.paymentMethodName || 'Não informado';
+                } else if (item.sector === 'social_media') {
+                    products = item.productsInterest || 'Não informado';
+                    value = formatCurrency(item.saleValue);
+                    paymentMethod = item.paymentMethodName || 'Não informado';
+                } else if (item.sector === 'caixa') {
+                    products = item.productsAcquired || 'Não informado';
+                    value = formatCurrency(item.totalValue);
+                    paymentMethod = item.paymentMethodName || 'Não informado';
+                }
+                
+                html += `
+                    <tr>
+                        <td>${formatDateTime(item.timestamp)}</td>
+                        <td>${item.clientName || 'Não informado'}</td>
+                        <td>${item.attendantName || 'Não informado'}</td>
+                        <td>${products}</td>
+                        <td>${value}</td>
+                        <td>${paymentMethod}</td>
+                        <td><button class="view-details-btn" onclick="showDetails('${item.id}')">Ver Detalhes</button></td>
+                    </tr>
+                `;
+            });
+            
+            if (html === '') {
+                html = '<tr><td colspan="7" style="text-align: center;">Nenhuma venda encontrada</td></tr>';
+            }
+            
+            document.getElementById('salesTable').innerHTML = html;
+        }
+        
+        // Função para preencher a tabela de atendentes
+        function fillAttendantsTable(dataArray) {
+            // Agrupar por atendente
+            const attendantsMap = new Map();
+            
+            dataArray.forEach(item => {
+                if (!item.attendantId) return;
+                
+                const attendantId = item.attendantId;
+                const sectorKey = `${attendantId}-${item.sector}`;
+                
+                if (!attendantsMap.has(sectorKey)) {
+                    attendantsMap.set(sectorKey, {
+                        id: attendantId,
+                        name: item.attendantName,
+                        sector: item.sector,
+                        attendances: 0,
+                        sales: 0,
+                        totalValue: 0
+                    });
+                }
+                
+                const attendant = attendantsMap.get(sectorKey);
+                attendant.attendances++;
+                
+                // Verificar se é uma venda
+                let isSale = false;
+                let saleValue = 0;
+                
+                if (item.sector === 'loja_fisica' && item.attendanceType === 'sale_completed') {
+                    isSale = true;
+                    saleValue = parseFloat(item.saleValue || 0);
+                } else if (item.sector === 'social_media' && item.interactionType === 'purchase') {
+                    isSale = true;
+                    saleValue = parseFloat(item.saleValue || 0);
+                } else if (item.sector === 'caixa' && item.operationType === 'payment') {
+                    isSale = true;
+                    saleValue = parseFloat(item.totalValue || 0);
+                }
+                
+                if (isSale) {
+                    attendant.sales++;
+                    attendant.totalValue += saleValue;
+                }
+            });
+            
+            // Converter para array e ordenar por número de atendimentos
+            const attendantsArray = Array.from(attendantsMap.values());
+            attendantsArray.sort((a, b) => b.attendances - a.attendances);
+            
+            let html = '';
+            
+            attendantsArray.forEach(attendant => {
+                const conversionRate = attendant.attendances > 0 ? (attendant.sales / attendant.attendances * 100).toFixed(1) + '%' : '0%';
+                const averageTicket = attendant.sales > 0 ? formatCurrency(attendant.totalValue / attendant.sales) : 'R$ 0,00';
+                
+                html += `
+                    <tr>
+                        <td>${attendant.name}</td>
+                        <td>${getSectorName(attendant.sector)}</td>
+                        <td>${attendant.attendances}</td>
+                        <td>${attendant.sales}</td>
+                        <td>${conversionRate}</td>
+                        <td>${formatCurrency(attendant.totalValue)}</td>
+                        <td>${averageTicket}</td>
+                    </tr>
+                `;
+            });
+            
+            if (html === '') {
+                html = '<tr><td colspan="7" style="text-align: center;">Nenhum atendente encontrado</td></tr>';
+            }
+            
+            document.getElementById('attendantsTable').innerHTML = html;
+        }
+        
+        // Função para exportar dados
+        function exportData(dataArray) {
+            // Filtrar dados com base nos filtros atuais
+            const filteredData = applyFilters(dataArray);
+            
+            // Converter para CSV
+            let csv = 'Data/Hora,Cliente,Atendente,Setor,Tipo,Valor,Observações\n';
+            
+            filteredData.forEach(item => {
+                let type = '';
+                let value = '';
+                
+                if (item.sector === 'loja_fisica') {
+                    type = item.attendanceTypeName || '';
+                    value = item.attendanceType === 'sale_completed' ? item.saleValue : '';
+                } else if (item.sector === 'social_media') {
+                    type = item.interactionTypeName || '';
+                    value = item.interactionType === 'purchase' ? item.saleValue : '';
+                } else if (item.sector === 'caixa') {
+                    type = item.operationTypeName || '';
+                    value = item.operationType === 'payment' || item.operationType === 'exchange' ? item.totalValue : '';
+                }
+                
+                // Escapar campos com vírgulas
+                const clientName = item.clientName ? `"${item.clientName.replace(/"/g, '""')}"` : '';
+                const attendantName = item.attendantName ? `"${item.attendantName.replace(/"/g, '""')}"` : '';
+                const observations = item.observations ? `"${item.observations.replace(/"/g, '""')}"` : '';
+                
+                csv += `${formatDateTime(item.timestamp)},${clientName},${attendantName},${getSectorName(item.sector)},"${type}",${value},${observations}\n`;
+            });
+            
+            // Criar blob e link para download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'relatorio_atendimentos.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Função para aplicar filtros
+        function applyFilters(dataArray) {
+            if (!dataArray) return [];
+            
+            const dateRangeFilter = document.getElementById('dateRangeFilter').value;
+            const sectorFilter = document.getElementById('sectorFilter').value;
+            const attendantFilter = document.getElementById('attendantFilter').value;
+            
+            return dataArray.filter(item => {
+                // Filtro de data
+                const itemDate = new Date(item.timestamp);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                const last7days = new Date(today);
+                last7days.setDate(last7days.getDate() - 7);
+                
+                const last30days = new Date(today);
+                last30days.setDate(last30days.getDate() - 30);
+                
+                const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                
+                const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+                
+                let dateMatch = true;
+                
+                if (dateRangeFilter === 'today') {
+                    dateMatch = itemDate >= today;
+                } else if (dateRangeFilter === 'yesterday') {
+                    dateMatch = itemDate >= yesterday && itemDate < today;
+                } else if (dateRangeFilter === 'last7days') {
+                    dateMatch = itemDate >= last7days;
+                } else if (dateRangeFilter === 'last30days') {
+                    dateMatch = itemDate >= last30days;
+                } else if (dateRangeFilter === 'thisMonth') {
+                    dateMatch = itemDate >= thisMonth;
+                } else if (dateRangeFilter === 'lastMonth') {
+                    dateMatch = itemDate >= lastMonth && itemDate <= lastMonthEnd;
+                } else if (dateRangeFilter === 'custom') {
+                    const startDate = new Date(document.getElementById('startDateFilter').value);
+                    startDate.setHours(0, 0, 0, 0);
+                    
+                    const endDate = new Date(document.getElementById('endDateFilter').value);
+                    endDate.setHours(23, 59, 59, 999);
+                    
+                    dateMatch = itemDate >= startDate && itemDate <= endDate;
+                }
+                
+                // Filtro de setor
+                const sectorMatch = sectorFilter === 'all' || item.sector === sectorFilter;
+                
+                // Filtro de atendente
+                const attendantMatch = attendantFilter === 'all' || item.attendantId === attendantFilter;
+                
+                return dateMatch && sectorMatch && attendantMatch;
+            });
+        }
+        
+        // Evento para alternar entre as abas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remover classe active de todas as abas
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Adicionar classe active na aba clicada
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
+            });
+        });
+        
+        // Evento para mostrar/ocultar campos de data personalizada
+        document.getElementById('dateRangeFilter').addEventListener('change', function() {
+            const customDateGroup = document.getElementById('customDateGroup');
+            const customDateEndGroup = document.getElementById('customDateEndGroup');
+            
+            if (this.value === 'custom') {
+                customDateGroup.style.display = 'block';
+                customDateEndGroup.style.display = 'block';
+            } else {
+                customDateGroup.style.display = 'none';
+                customDateEndGroup.style.display = 'none';
+            }
+        });
+        
+        // Evento para aplicar filtros
+        document.getElementById('applyFiltersBtn').addEventListener('click', function() {
+            loadData();
+        });
+        
+        // Evento para limpar filtros
+        document.getElementById('resetFiltersBtn').addEventListener('click', function() {
+            document.getElementById('dateRangeFilter').value = 'today';
+            document.getElementById('sectorFilter').value = 'all';
+            document.getElementById('attendantFilter').value = 'all';
+            document.getElementById('customDateGroup').style.display = 'none';
+            document.getElementById('customDateEndGroup').style.display = 'none';
+            
+            loadData();
+        });
+        
+        // Evento para exportar dados
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            database.ref('clientData').once('value')
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        // Converter objeto em array
+                        const dataArray = Object.entries(data).map(([key, value]) => ({
+                            id: key,
+                            ...value
+                        }));
+                        
+                        // Exportar dados
+                        exportData(dataArray);
+                    } else {
+                        alert('Nenhum dado para exportar.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar dados para exportação:', error);
+                    alert('Erro ao carregar dados para exportação.');
+                });
+        });
+        
+        // Evento para voltar à página inicial
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+        
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+    </script>
+</body>
+</html>
