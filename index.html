@@ -160,5 +160,28 @@
             Sistema de Controle de Clientes © 2025
         </div>
     </div>
+
+    <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<!-- Configuração do Firebase -->
+<script>
+  // Configuração do Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyBP7vj2eaIt5t49PIWRxfGXOVehkNIbJk",
+    authDomain: "controle-loja-9c606.firebaseapp.com",
+    projectId: "controle-loja-9c606",
+    storageBucket: "controle-loja-9c606.firebasestorage.app",
+    messagingSenderId: "291893265962",
+    appId: "1:291893265962:web:3d2405ada39406df40a553",
+    databaseURL: "https://controle-loja-9c606-default-rtdb.firebaseio.com"
+  };
+  
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig );
+  const database = firebase.database();
+</script>
+
 </body>
 </html>
