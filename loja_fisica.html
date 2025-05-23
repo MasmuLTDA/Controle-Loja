@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Clientes - Loja Física</title>
+    <style>
+        :root {
+            --primary-color: #f9afb5;
+            --secondary-color: #e79aa0;
+            --accent-color: #f9afb5;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f5f5;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            max-width: 150px;
+            margin: 0 auto 10px;
+            display: block;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(249, 175, 181, 0.2);
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .success-message {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab.active {
+            border-bottom: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        /* Estilo para o toggle de canal de atendimento */
+        .channel-toggle {
+            display: flex;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+        }
+        
+        .channel-option {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .channel-option.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .channel-option:first-child {
+            border-right: 1px solid #ddd;
+        }
+        
+        /* Ícones para os canais */
+        .channel-icon {
+            margin-right: 5px;
+            font-size: 1.1rem;
+        }
+        
+        /* Badge para WhatsApp */
+        .whatsapp-badge {
+            background-color: #25D366;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="Masmu-negativa.png" alt="Masmu Logo" class="logo">
+        <h1>Controle de Clientes</h1>
+        <div class="subtitle">Loja Física</div>
+    </header>
+    
+    <div class="container">
+        <div class="success-message" id="successMessage">
+            Atendimento registrado com sucesso!
+        </div>
+        
+        <form id="clientForm">
+            <div class="form-group">
+                <label for="attendantId" class="required">Vendedor(a)</label>
+                <select id="attendantId" name="attendantId" required>
+                    <option value="">Selecione...</option>
+                    <option value="1">Daniela</option>
+                    <option value="2">Kaylane</option>
+                    <option value="3">Fabiola</option>
+                    <option value="4">Eduarda</option>
+                </select>
+                <div class="error-message" id="attendantIdError">Por favor, selecione o vendedor</div>
+            </div>
+            
+            <!-- Novo campo para canal de atendimento -->
+            <div class="form-group">
+                <label>Canal de Atendimento</label>
+                <div class="channel-toggle">
+                    <div class="channel-option active" data-channel="presencial">
+                        <span class="channel-icon">👩‍💼</span> Presencial
+                    </div>
+                    <div class="channel-option" data-channel="whatsapp">
+                        <span class="channel-icon">📱</span> WhatsApp
+                    </div>
+                </div>
+                <input type="hidden" id="attendanceChannel" name="attendanceChannel" value="presencial">
+            </div>
+            
+            <div class="form-group">
+                <label for="clientName" class="required">Nome do Cliente</label>
+                <input type="text" id="clientName" name="clientName" placeholder="Nome completo" required>
+                <div class="error-message" id="clientNameError">Por favor, informe o nome do cliente</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="clientContact">Contato</label>
+                <input type="tel" id="clientContact" name="clientContact" placeholder="Telefone ou e-mail">
+            </div>
+            
+            <div class="form-group">
+                <label for="attendanceType" class="required">Tipo de Atendimento</label>
+                <select id="attendanceType" name="attendanceType" required>
+                    <option value="">Selecione...</option>
+                    <option value="sale_completed">Venda concluída</option>
+                    <option value="sale_not_completed">Venda não concluída</option>
+                    <option value="exchange">Troca</option>
+                    <option value="fitting">Prova</option>
+                </select>
+                <div class="error-message" id="attendanceTypeError">Por favor, selecione o tipo de atendimento</div>
+            </div>
+            
+            <div class="form-group" id="productSoldGroup" style="display: none;">
+                <label for="productSold">Produto Vendido</label>
+                <input type="text" id="productSold" name="productSold" placeholder="Produto(s) vendido(s)">
+            </div>
+            
+            <div class="form-group" id="productsInterestGroup" style="display: none;">
+                <label for="productsInterest">Produtos de Interesse</label>
+                <input type="text" id="productsInterest" name="productsInterest" placeholder="Categorias ou produtos específicos">
+            </div>
+            
+            <div class="form-group" id="exchangeProductGroup" style="display: none;">
+                <label for="exchangeProduct">Produto da Troca</label>
+                <input type="text" id="exchangeProduct" name="exchangeProduct" placeholder="Produto que está sendo trocado">
+            </div>
+            
+            <div class="form-group" id="saleValueGroup" style="display: none;">
+                <label for="saleValue">Valor da Venda (R$)</label>
+                <input type="number" id="saleValue" name="saleValue" step="0.01" min="0" placeholder="0,00">
+            </div>
+            
+            <div class="form-group" id="exchangeTypeGroup" style="display: none;">
+                <label for="exchangeType">Tipo de Troca</label>
+                <select id="exchangeType" name="exchangeType">
+                    <option value="">Selecione...</option>
+                    <option value="size">Troca de tamanho</option>
+                    <option value="other_product">Outro produto</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="originalSizeGroup" style="display: none;">
+                <label for="originalSize">Tamanho Original</label>
+                <input type="text" id="originalSize" name="originalSize" placeholder="Tamanho do produto original">
+            </div>
+            
+            <div class="form-group" id="newSizeGroup" style="display: none;">
+                <label for="newSize">Novo Tamanho</label>
+                <input type="text" id="newSize" name="newSize" placeholder="Tamanho do produto novo">
+            </div>
+            
+            <div class="form-group" id="newProductGroup" style="display: none;">
+                <label for="newProduct">Novo Produto</label>
+                <input type="text" id="newProduct" name="newProduct" placeholder="Produto que está sendo trocado">
+            </div>
+            
+            <div class="form-group" id="addedProductsGroup" style="display: none;">
+                <label for="addedProducts">Agregou mais produtos à troca?</label>
+                <select id="addedProducts" name="addedProducts">
+                    <option value="">Selecione...</option>
+                    <option value="yes">Sim</option>
+                    <option value="no">Não</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="addedProductsValueGroup" style="display: none;">
+                <label for="addedProductsValue">Valor dos produtos adicionais (R$)</label>
+                <input type="number" id="addedProductsValue" name="addedProductsValue" step="0.01" min="0" placeholder="0,00">
+            </div>
+            
+            <div class="form-group" id="fittingValueGroup" style="display: none;">
+                <label for="fittingValue">Valor da Prova (R$)</label>
+                <input type="number" id="fittingValue" name="fittingValue" step="0.01" min="0" placeholder="0,00">
+            </div>
+            
+            <div class="form-group" id="noSaleReasonGroup" style="display: none;">
+                <label for="noSaleReason">Motivo de Não Compra</label>
+                <select id="noSaleReason" name="noSaleReason">
+                    <option value="">Selecione...</option>
+                    <option value="price">Preço</option>
+                    <option value="stock">Produto indisponível</option>
+                    <option value="decision">Cliente vai pensar</option>
+                    <option value="comparison">Comparando preços</option>
+                    <option value="other">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="observations">Observações</label>
+                <textarea id="observations" name="observations" rows="3" placeholder="Informações adicionais relevantes"></textarea>
+            </div>
+            
+            <button type="submit">Registrar Atendimento</button>
+        </form>
+        
+        <div class="footer">
+            Sistema de Controle de Clientes © 2025
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBP7vj2eaIt5t49PIWRxfGXOVehkNIbJk",
+            authDomain: "controle-loja-9c606.firebaseapp.com",
+            projectId: "controle-loja-9c606",
+            storageBucket: "controle-loja-9c606.firebasestorage.app",
+            messagingSenderId: "291893265962",
+            appId: "1:291893265962:web:3d2405ada39406df40a553",
+            databaseURL: "https://controle-loja-9c606-default-rtdb.firebaseio.com"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Toggle para canal de atendimento
+        document.querySelectorAll('.channel-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remover classe ativa de todas as opções
+                document.querySelectorAll('.channel-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                
+                // Adicionar classe ativa à opção clicada
+                this.classList.add('active');
+                
+                // Atualizar valor do campo oculto
+                const channel = this.getAttribute('data-channel');
+                document.getElementById('attendanceChannel').value = channel;
+                
+                // Ajustar o placeholder do campo de contato com base no canal
+                const contactField = document.getElementById('clientContact');
+                if (channel === 'whatsapp') {
+                    contactField.placeholder = "Número do WhatsApp";
+                } else {
+                    contactField.placeholder = "Telefone ou e-mail";
+                }
+            });
+        });
+        
+        // Mostrar/ocultar campos com base no tipo de atendimento
+        document.getElementById('attendanceType').addEventListener('change', function() {
+            const productSoldGroup = document.getElementById('productSoldGroup');
+            const productsInterestGroup = document.getElementById('productsInterestGroup');
+            const exchangeProductGroup = document.getElementById('exchangeProductGroup');
+            const saleValueGroup = document.getElementById('saleValueGroup');
+            const noSaleReasonGroup = document.getElementById('noSaleReasonGroup');
+            const exchangeTypeGroup = document.getElementById('exchangeTypeGroup');
+            const addedProductsGroup = document.getElementById('addedProductsGroup');
+            const addedProductsValueGroup = document.getElementById('addedProductsValueGroup');
+            const fittingValueGroup = document.getElementById('fittingValueGroup');
+            const originalSizeGroup = document.getElementById('originalSizeGroup');
+            const newSizeGroup = document.getElementById('newSizeGroup');
+            const newProductGroup = document.getElementById('newProductGroup');
+            
+            // Esconder todos os grupos primeiro
+            productSoldGroup.style.display = 'none';
+            productsInterestGroup.style.display = 'none';
+            exchangeProductGroup.style.display = 'none';
+            saleValueGroup.style.display = 'none';
+            noSaleReasonGroup.style.display = 'none';
+            exchangeTypeGroup.style.display = 'none';
+            addedProductsGroup.style.display = 'none';
+            addedProductsValueGroup.style.display = 'none';
+            fittingValueGroup.style.display = 'none';
+            originalSizeGroup.style.display = 'none';
+            newSizeGroup.style.display = 'none';
+            newProductGroup.style.display = 'none';
+            
+            // Mostrar grupos relevantes com base no tipo de atendimento
+            if (this.value === 'sale_completed') {
+                productSoldGroup.style.display = 'block';
+                saleValueGroup.style.display = 'block';
+            } else if (this.value === 'sale_not_completed') {
+                productsInterestGroup.style.display = 'block';
+                noSaleReasonGroup.style.display = 'block';
+            } else if (this.value === 'exchange') {
+                exchangeProductGroup.style.display = 'block';
+                exchangeTypeGroup.style.display = 'block';
+                addedProductsGroup.style.display = 'block';
+            } else if (this.value === 'fitting') {
+                productsInterestGroup.style.display = 'block';
+                fittingValueGroup.style.display = 'block';
+            }
+        });
+        
+        // Mostrar/ocultar campos com base no tipo de troca
+        document.getElementById('exchangeType').addEventListener('change', function() {
+            const originalSizeGroup = document.getElementById('originalSizeGroup');
+            const newSizeGroup = document.getElementById('newSizeGroup');
+            const newProductGroup = document.getElementById('newProductGroup');
+            
+            originalSizeGroup.style.display = 'none';
+            newSizeGroup.style.display = 'none';
+            newProductGroup.style.display = 'none';
+            
+            if (this.value === 'size') {
+                originalSizeGroup.style.display = 'block';
+                newSizeGroup.style.display = 'block';
+            } else if (this.value === 'other_product') {
+                newProductGroup.style.display = 'block';
+            }
+        });
+        
+        // Mostrar/ocultar campos com base na adição de produtos
+        document.getElementById('addedProducts').addEventListener('change', function() {
+            const addedProductsValueGroup = document.getElementById('addedProductsValueGroup');
+            
+            if (this.value === 'yes') {
+                addedProductsValueGroup.style.display = 'block';
+            } else {
+                addedProductsValueGroup.style.display = 'none';
+            }
+        });
+        
+        // Validação do formulário
+        document.getElementById('clientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true;
+            
+            // Validar campos obrigatórios
+            const attendantId = document.getElementById('attendantId');
+            const clientName = document.getElementById('clientName');
+            const attendanceType = document.getElementById('attendanceType');
+            
+            if (!attendantId.value) {
+                document.getElementById('attendantIdError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('attendantIdError').style.display = 'none';
+            }
+            
+            if (!clientName.value) {
+                document.getElementById('clientNameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('clientNameError').style.display = 'none';
+            }
+            
+            if (!attendanceType.value) {
+                document.getElementById('attendanceTypeError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('attendanceTypeError').style.display = 'none';
+            }
+            
+            if (isValid) {
+                // Coletar todos os dados do formulário
+                const formData = {
+                    attendantId: attendantId.value,
+                    attendantName: attendantId.options[attendantId.selectedIndex].text,
+                    clientName: clientName.value,
+                    clientContact: document.getElementById('clientContact').value,
+                    attendanceType: attendanceType.value,
+                    attendanceTypeName: attendanceType.options[attendanceType.selectedIndex].text,
+                    attendanceChannel: document.getElementById('attendanceChannel').value,
+                    observations: document.getElementById('observations').value,
+                    timestamp: new Date().toISOString(),
+                    sector: 'loja_fisica'
+                };
+                
+                // Adicionar campos específicos com base no tipo de atendimento
+                if (attendanceType.value === 'sale_completed') {
+                    formData.productSold = document.getElementById('productSold').value;
+                    formData.saleValue = document.getElementById('saleValue').value || "0";
+                } else if (attendanceType.value === 'sale_not_completed') {
+                    formData.productsInterest = document.getElementById('productsInterest').value;
+                    formData.noSaleReason = document.getElementById('noSaleReason').value;
+                    formData.noSaleReasonName = document.getElementById('noSaleReason').value ? 
+                        document.getElementById('noSaleReason').options[document.getElementById('noSaleReason').selectedIndex].text : "";
+                } else if (attendanceType.value === 'exchange') {
+                    formData.exchangeProduct = document.getElementById('exchangeProduct').value;
+                    formData.exchangeType = document.getElementById('exchangeType').value;
+                    formData.exchangeTypeName = document.getElementById('exchangeType').value ? 
+                        document.getElementById('exchangeType').options[document.getElementById('exchangeType').selectedIndex].text : "";
+                    
+                    if (document.getElementById('exchangeType').value === 'size') {
+                        formData.originalSize = document.getElementById('originalSize').value;
+                        formData.newSize = document.getElementById('newSize').value;
+                    } else if (document.getElementById('exchangeType').value === 'other_product') {
+                        formData.newProduct = document.getElementById('newProduct').value;
+                    }
+                    
+                    formData.addedProducts = document.getElementById('addedProducts').value;
+                    if (document.getElementById('addedProducts').value === 'yes') {
+                        formData.addedProductsValue = document.getElementById('addedProductsValue').value || "0";
+                    }
+                } else if (attendanceType.value === 'fitting') {
+                    formData.productsInterest = document.getElementById('productsInterest').value;
+                    formData.fittingValue = document.getElementById('fittingValue').value || "0";
+                }
+                
+                // Salvar no Firebase
+                const newAttendanceRef = database.ref('attendances').push();
+                newAttendanceRef.set(formData)
+                    .then(() => {
+                        // Mostrar mensagem de sucesso
+                        document.getElementById('successMessage').style.display = 'block';
+                        
+                        // Limpar formulário
+                        document.getElementById('clientForm').reset();
+                        
+                        // Esconder todos os grupos condicionais
+                        document.querySelectorAll('.form-group[id$="Group"]').forEach(group => {
+                            if (group.id !== 'attendantIdGroup') {
+                                group.style.display = 'none';
+                            }
+                        });
+                        
+                        // Esconder mensagem após 3 segundos
+                        setTimeout(() => {
+                            document.getElementById('successMessage').style.display = 'none';
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        console.error("Erro ao salvar atendimento:", error);
+                        alert("Ocorreu um erro ao registrar o atendimento. Por favor, tente novamente.");
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
