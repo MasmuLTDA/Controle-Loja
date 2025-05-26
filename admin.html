@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Sistema de Controle de Clientes</title>
+    <style>
+        /* Definindo as variáveis de cores padrão */
+        :root {
+            --primary-color: #f9afb5;
+            --secondary-color: #e79aa0;
+            --accent-color: #f9afb5;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte padrão */
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color); /* Usando variável para cor do texto */
+        }
+        
+        header {
+            background-color: var(--primary-color); /* Cor primária padrão */
+            color: white;
+            padding: 1rem; /* Ajustando padding para consistência */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 10px 10px; /* Bordas arredondadas */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra padrão */
+            margin-bottom: 1.5rem; /* Adicionando margem inferior */
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px; /* Mantendo tamanho do logo */
+            margin-right: 15px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 1.5rem; /* Ajustando para o padrão */
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            font-size: 1.2rem; /* Ajustando para o padrão */
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap; /* Melhor responsividade */
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 10px; /* Bordas mais arredondadas como padrão */
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 23%;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s; /* Efeito hover padrão */
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--primary-color); /* Usando variável de cor primária */
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap; /* Permitir quebra de linha em telas menores */
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap; /* Evitar quebra de texto */
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color); /* Usando variável de cor primária */
+            color: var(--primary-color); /* Usando variável de cor primária */
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px; /* Bordas mais arredondadas como padrão */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            width: 23%;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group label {
+            margin-bottom: 5px;
+            font-weight: 500; /* Ajustando para o padrão */
+            color: var(--dark-color); /* Usando variável para cor do texto */
+        }
+        
+        .filter-group select, .filter-group input {
+            padding: 0.75rem; /* Ajustando para o padrão */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(249, 175, 181, 0.2);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        
+        button {
+            padding: 0.75rem 1.5rem; /* Ajustando para o padrão */
+            border: none;
+            border-radius: 5px; /* Bordas mais arredondadas como padrão */
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: 500; /* Ajustando para o padrão */
+            transition: background-color 0.3s;
+        }
+        
+        .clear-btn {
+            background-color: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        
+        .clear-btn:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .apply-btn {
+            background-color: var(--accent-color); /* Usando variável de cor de destaque */
+            color: white;
+        }
+        
+        .apply-btn:hover {
+            background-color: var(--secondary-color); /* Usando variável de cor secundária */
+        }
+        
+        .export-btn {
+            background-color: var(--success-color); /* Usando variável de cor de sucesso */
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background-color: #218838; /* Tom mais escuro do verde */
+        }
+        
+        .advanced-filters-toggle {
+            color: var(--primary-color);
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-block;
+            font-weight: 500;
+        }
+        
+        .advanced-filters {
+            display: none;
+            width: 100%;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .advanced-filters.show {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 10px; /* Bordas mais arredondadas como padrão */
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            color: var(--dark-color); /* Usando variável para cor do texto */
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .view-details-btn {
+            background-color: var(--accent-color); /* Usando variável de cor de destaque */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px; /* Bordas mais arredondadas como padrão */
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+        
+        .view-details-btn:hover {
+            background-color: var(--secondary-color); /* Usando variável de cor secundária */
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px; /* Bordas mais arredondadas como padrão */
+            width: 70%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Sombra mais pronunciada */
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .detail-label {
+            width: 30%;
+            font-weight: bold;
+            color: var(--dark-color); /* Usando variável para cor do texto */
+        }
+        
+        .detail-value {
+            width: 70%;
+        }
+        
+        /* Badge para canais de atendimento */
+        .channel-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            color: white;
+        }
+        
+        .channel-whatsapp {
+            background-color: #25D366;
+        }
+        
+        .channel-instagram {
+            background-color: #C13584;
+        }
+        
+        .channel-presencial {
+            background-color: #007bff;
+        }
+        
+        @media (max-width: 992px) {
+            .filter-group {
+                width: 48%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-container {
+                flex-wrap: wrap;
+            }
+            
+            .stat-card {
+                width: 48%;
+                margin-bottom: 15px;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .filter-buttons {
+                justify-content: space-between;
+            }
+            
+            button {
+                margin: 0 5px;
+            }
+            
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stat-card {
+                width: 100%;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                width: 50%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="Masmu-negativa.png" alt="Logo">
+            <h1>Sistema de Controle de Clientes</h1>
+        </div>
+        <div>
+            <span>Administração</span>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1>Painel Administrativo</h1>
+        <h2>Bem-vindo ao painel administrativo do Sistema de Controle de Clientes.</h2>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3 id="totalClients">0</h3>
+                <p>Total de Clientes</p>
+                <small>Clientes atendidos</small>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalSales">0</h3>
+                <p>Total de Vendas</p>
+                <small>Vendas concluídas</small>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalValue">R$ 0,00</h3>
+                <p>Valor Total</p>
+                <small>Em vendas</small>
+            </div>
+            <div class="stat-card">
+                <h3 id="averageTicket">R$ 0,00</h3>
+                <p>Ticket Médio</p>
+                <small>Por venda</small>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="recent">Últimos Atendimentos</div>
+            <div class="tab" data-tab="clients">Clientes</div>
+            <div class="tab" data-tab="sales">Vendas</div>
+            <div class="tab" data-tab="payments">Pagamentos</div> <!-- Nova aba -->
+            <div class="tab" data-tab="attendants">Atendentes</div>
+        </div>
+        
+        <!-- Conteúdo da Aba: Últimos Atendimentos -->
+        <div class="tab-content active" id="recent-tab">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="periodFilter">Período</label>
+                    <select id="periodFilter">
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Últimos 7 dias</option>
+                        <option value="month">Últimos 30 dias</option>
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sectorFilter">Setor</label>
+                    <select id="sectorFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="loja_fisica">Loja Física</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="caixa">Caixa</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="operationTypeFilter">Tipo de Operação</label>
+                    <select id="operationTypeFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="sale">Vendas</option>
+                        <option value="payment">Pagamentos</option>
+                        <option value="exchange">Trocas</option>
+                        <option value="info">Consultas/Informações</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="attendantFilter">Atendente</label>
+                    <select id="attendantFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <!-- Populado dinamicamente -->
+                    </select>
+                </div>
+                
+                <div class="filter-group" id="paymentTypeFilterGroup" style="display: none;">
+                    <label for="paymentTypeFilter">Tipo de Pagamento</label>
+                    <select id="paymentTypeFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="purchase_payment">Pagamento de compra</option>
+                        <option value="booklet_payment">Pagamento de carnê</option>
+                        <option value="installment_query">Consulta de parcela</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group" id="channelFilterGroup">
+                    <label for="channelFilter">Canal de Atendimento</label>
+                    <select id="channelFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="presencial">Presencial</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="instagram">Instagram</option>
+                    </select>
+                </div>
+                
+                <div class="advanced-filters-toggle" id="toggleAdvancedFilters">
+                    Mostrar filtros avançados
+                </div>
+                
+                <div class="advanced-filters" id="advancedFilters">
+                    <div class="filter-group">
+                        <label for="minValueFilter">Valor Mínimo (R$)</label>
+                        <input type="number" id="minValueFilter" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="maxValueFilter">Valor Máximo (R$)</label>
+                        <input type="number" id="maxValueFilter" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="paymentMethodFilter">Forma de Pagamento</label>
+                        <select id="paymentMethodFilter">
+                            <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                            <option value="cash">Dinheiro</option>
+                            <option value="credit">Cartão de Crédito</option>
+                            <option value="debit">Cartão de Débito</option>
+                            <option value="pix">PIX</option>
+                            <option value="transfer">Transferência</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="statusFilter">Status</label>
+                        <select id="statusFilter">
+                            <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                            <option value="completed">Concluído</option>
+                            <option value="pending">Pendente</option>
+                            <option value="canceled">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="productFilter">Produto</label>
+                        <input type="text" id="productFilter" placeholder="Nome do produto">
+                    </div>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="clear-btn" id="clearFilters">Limpar Filtros</button>
+                    <button class="apply-btn" id="applyFilters">Aplicar Filtros</button>
+                    <button class="export-btn" id="exportData">Exportar Dados</button>
+                </div>
+            </div>
+            
+            <h2>Últimos Atendimentos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Atendente</th>
+                        <th>Setor</th>
+                        <th>Tipo</th>
+                        <th>Canal</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="recentAttendancesTable">
+                    <tr>
+                        <td colspan="8" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Conteúdo da Aba: Clientes -->
+        <div class="tab-content" id="clients-tab">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="clientPeriodFilter">Período</label>
+                    <select id="clientPeriodFilter">
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Últimos 7 dias</option>
+                        <option value="month">Últimos 30 dias</option>
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="clientSectorFilter">Setor</label>
+                    <select id="clientSectorFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="loja_fisica">Loja Física</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="caixa">Caixa</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="clientChannelFilter">Canal de Atendimento</label>
+                    <select id="clientChannelFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="presencial">Presencial</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="instagram">Instagram</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="clientSearchFilter">Buscar Cliente</label>
+                    <input type="text" id="clientSearchFilter" placeholder="Nome do cliente">
+                </div>
+                
+                <div class="advanced-filters-toggle" id="toggleClientAdvancedFilters">
+                    Mostrar filtros avançados
+                </div>
+                
+                <div class="advanced-filters" id="clientAdvancedFilters">
+                    <div class="filter-group">
+                        <label for="clientMinValueFilter">Valor Mínimo (R$)</label>
+                        <input type="number" id="clientMinValueFilter" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="clientMaxValueFilter">Valor Máximo (R$)</label>
+                        <input type="number" id="clientMaxValueFilter" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="clientVisitsFilter">Mínimo de Visitas</label>
+                        <input type="number" id="clientVisitsFilter" min="1" placeholder="1">
+                    </div>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="clear-btn" id="clearClientFilters">Limpar Filtros</button>
+                    <button class="apply-btn" id="applyClientFilters">Aplicar Filtros</button>
+                    <button class="export-btn" id="exportClientData">Exportar Dados</button>
+                </div>
+            </div>
+            
+            <h2>Clientes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Contato</th>
+                        <th>Atendimentos</th>
+                        <th>Compras</th>
+                        <th>Valor Total</th>
+                        <th>Último Atendimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTable">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Conteúdo da Aba: Vendas -->
+        <div class="tab-content" id="sales-tab">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="salePeriodFilter">Período</label>
+                    <select id="salePeriodFilter">
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Últimos 7 dias</option>
+                        <option value="month">Últimos 30 dias</option>
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="saleSectorFilter">Setor</label>
+                    <select id="saleSectorFilter">
+                        <option value="all" selected>Loja Física e Social Media</option> <!-- Padrão: Todos (Loja/Social) -->
+                        <option value="loja_fisica">Loja Física</option>
+                        <option value="Social Media">Social Media</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="saleChannelFilter">Canal de Atendimento</label>
+                    <select id="saleChannelFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="presencial">Presencial</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="instagram">Instagram</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="saleAttendantFilter">Atendente</label>
+                    <select id="saleAttendantFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <!-- Populado dinamicamente -->
+                    </select>
+                </div>
+                
+                <div class="advanced-filters-toggle" id="toggleSaleAdvancedFilters">
+                    Mostrar filtros avançados
+                </div>
+                
+                <div class="advanced-filters" id="saleAdvancedFilters">
+                    <div class="filter-group">
+                        <label for="saleMinValueFilter">Valor Mínimo (R$)</label>
+                        <input type="number" id="saleMinValueFilter" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="saleMaxValueFilter">Valor Máximo (R$)</label>
+                        <input type="number" id="saleMaxValueFilter" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="filter-group">
+                        <label for="salePaymentMethodFilter">Forma de Pagamento</label>
+                        <select id="salePaymentMethodFilter">
+                            <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                            <option value="cash">Dinheiro</option>
+                            <option value="credit">Cartão de Crédito</option>
+                            <option value="debit">Cartão de Débito</option>
+                            <option value="pix">PIX</option>
+                            <option value="transfer">Transferência</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="saleProductFilter">Produto</label>
+                        <input type="text" id="saleProductFilter" placeholder="Nome do produto">
+                    </div>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="clear-btn" id="clearSaleFilters">Limpar Filtros</button>
+                    <button class="apply-btn" id="applySaleFilters">Aplicar Filtros</button>
+                    <button class="export-btn" id="exportSaleData">Exportar Dados</button>
+                </div>
+            </div>
+            
+            <h2>Vendas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Atendente</th>
+                        <th>Setor</th>
+                        <th>Canal</th>
+                        <th>Valor</th>
+                        <th>Forma de Pagamento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTable">
+                    <tr>
+                        <td colspan="8" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Conteúdo da Aba: Pagamentos -->
+        <div class="tab-content" id="payments-tab">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="paymentPeriodFilter">Período</label>
+                    <select id="paymentPeriodFilter">
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Últimos 7 dias</option>
+                        <option value="month">Últimos 30 dias</option>
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="paymentAttendantFilter">Operador(a) de Caixa</label>
+                    <select id="paymentAttendantFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <!-- Populado dinamicamente -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="paymentOperationTypeFilter">Tipo de Operação</label>
+                    <select id="paymentOperationTypeFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="payment">Pagamento de compra</option>
+                        <option value="exchange">Troca</option>
+                        <option value="installment_query_whatsapp">Consulta de parcela via WhatsApp</option>
+                        <option value="installment_query_store">Consulta de parcela na loja</option>
+                        <option value="payment_booklet_whatsapp">Pagamento de carnê via WhatsApp</option>
+                        <option value="payment_booklet_store">Pagamento de carnê na loja</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="paymentMethodFilterCaixa">Forma de Pagamento</label>
+                    <select id="paymentMethodFilterCaixa">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="cash">Dinheiro</option>
+                        <option value="credit">Cartão de Crédito</option>
+                        <option value="debit">Cartão de Débito</option>
+                        <option value="pix">PIX</option>
+                        <option value="transfer">Transferência</option>
+                        <option value="other">Outro</option>
+                    </select>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="clear-btn" id="clearPaymentFilters">Limpar Filtros</button>
+                    <button class="apply-btn" id="applyPaymentFilters">Aplicar Filtros</button>
+                    <button class="export-btn" id="exportPaymentData">Exportar Dados</button>
+                </div>
+            </div>
+            
+            <h2>Pagamentos (Caixa)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Cliente</th>
+                        <th>Operador(a)</th>
+                        <th>Tipo de Operação</th>
+                        <th>Valor</th>
+                        <th>Forma de Pagamento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentsTable">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Conteúdo da Aba: Atendentes -->
+        <div class="tab-content" id="attendants-tab">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="attendantPeriodFilter">Período</label>
+                    <select id="attendantPeriodFilter">
+                        <option value="today">Hoje</option>
+                        <option value="yesterday">Ontem</option>
+                        <option value="week">Últimos 7 dias</option>
+                        <option value="month">Últimos 30 dias</option>
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="attendantSectorFilter">Setor</label>
+                    <select id="attendantSectorFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="loja_fisica">Loja Física</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="caixa">Caixa</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="attendantOperationFilter">Tipo de Operação</label>
+                    <select id="attendantOperationFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="sale">Vendas</option>
+                        <option value="payment">Pagamentos</option>
+                        <option value="exchange">Trocas</option>
+                        <option value="info">Consultas/Informações</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="attendantChannelFilter">Canal de Atendimento</label>
+                    <select id="attendantChannelFilter">
+                        <option value="all" selected>Todos</option> <!-- Padrão: Todos -->
+                        <option value="presencial">Presencial</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="instagram">Instagram</option>
+                    </select>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="clear-btn" id="clearAttendantFilters">Limpar Filtros</button>
+                    <button class="apply-btn" id="applyAttendantFilters">Aplicar Filtros</button>
+                    <button class="export-btn" id="exportAttendantData">Exportar Dados</button>
+                </div>
+            </div>
+            
+            <h2>Atendentes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Setor</th>
+                        <th>Atendimentos</th>
+                        <th>Vendas</th>
+                        <th>Valor Total</th>
+                        <th>Ticket Médio</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="attendantsTable">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal de Detalhes/Edição -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Detalhes/Editar Atendimento</h2>
+            <form id="editForm">
+                <div id="detailsContent">
+                    <!-- Conteúdo dinâmico será inserido aqui -->
+                </div>
+                <div style="text-align: right; margin-top: 20px;">
+                    <button type="button" class="clear-btn" id="cancelEdit">Cancelar</button>
+                    <button type="submit" class="apply-btn" id="saveEdit">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBP7vj2eett5t49PlWRxfGXOOYehkNibik",
+            authDomain: "controle-loja-9c606.firebaseapp.com",
+            projectId: "controle-loja-9c606",
+            storageBucket: "controle-loja-9c606.firebasestorage.app",
+            messagingSenderId: "291893265962",
+            appId: "1:291893265962:web:3d2405ada39406df40a553",
+            databaseURL: "https://controle-loja-9c606-default-rtdb.firebaseio.com"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // Referência ao nó do banco de dados onde os atendimentos são armazenados
+const attendancesRef = database.ref('/atendimentos'); // Ajuste este caminho se necessário
+
+// Variável global para armazenar os dados do Firebase
+let firebaseData = [];
+
+// Listener para buscar e atualizar dados em tempo real
+attendancesRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    firebaseData = []; // Limpa os dados antigos
+    if (data) {
+        // Converte o objeto retornado pelo Firebase em um array
+        firebaseData = Object.keys(data).map(key => ({
+            id: key, // Adiciona o ID único do Firebase
+            ...data[key]
+        }));
+        
+        // Ordena os dados por data (mais recente primeiro) - Assumindo que 'timestamp' existe
+        // Se não houver timestamp, a ordenação por string de data pode não ser precisa
+        firebaseData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
+        
+        console.log("Dados carregados do Firebase:", firebaseData.length, "registros.");
+        
+        // Popula os filtros de atendente com base nos dados reais
+        populateAttendantFilters();
+        
+        // Calcula e exibe as estatísticas gerais
+        calculateAndDisplayStats();
+        
+        // Carrega os dados na aba ativa atualmente
+        const activeTab = document.querySelector('.tab.active')?.getAttribute('data-tab') || 'recent';
+        loadDataForTab(activeTab);
+        
+    } else {
+        console.log("Nenhum dado encontrado no Firebase em", attendancesRef.path.toString());
+        // Limpa as tabelas e estatísticas se não houver dados
+        clearAllTables();
+        clearStats();
+        populateAttendantFilters(); // Limpa os filtros de atendente
+    }
+}, (error) => {
+    console.error("Erro ao buscar dados do Firebase:", error);
+    alert("Erro ao conectar com o banco de dados. Verifique sua conexão e a configuração do Firebase.");
+});
+
+// --- Funções Auxiliares ---
+        
+        function formatCurrency(value) {
+            if (typeof value !== 'number' || isNaN(value) || value === 0) {
+                return "-";
+            }
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+        
+        function getChannelBadge(channel) {
+            if (channel === 'whatsapp') {
+                return '<span class="channel-badge channel-whatsapp">WhatsApp</span>';
+            } else if (channel === 'instagram') {
+                return '<span class="channel-badge channel-instagram">Instagram</span>';
+            } else {
+                return '<span class="channel-badge channel-presencial">Presencial</span>';
+            }
+        }
+        
+        // Função para formatar data/hora a partir de timestamp ISO ou numérico
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return "-";
+            try {
+                // Tenta criar Date diretamente (funciona para ISO string e número)
+                const dateObj = new Date(timestamp);
+                if (isNaN(dateObj)) return "Data inválida";
+                
+                const day = dateObj.getDate().toString().padStart(2, '0');
+                const month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Mês é 0-indexado
+                const year = dateObj.getFullYear();
+                const hours = dateObj.getHours().toString().padStart(2, '0');
+                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            } catch (e) {
+                console.error("Erro ao formatar timestamp:", timestamp, e);
+                // Retorna o valor original ou um placeholder se falhar
+                return typeof timestamp === 'string' ? timestamp.split('T')[0] : "Erro data"; 
+            }
+        }
+
+        // Função para obter o timestamp numérico (ms) a partir de ISO string ou número
+        function getNumericTimestamp(timestamp) {
+             if (!timestamp) return 0;
+             try {
+                 const dateObj = new Date(timestamp);
+                 return isNaN(dateObj) ? 0 : dateObj.getTime();
+             } catch (e) {
+                 return 0;
+             }
+        }
+        
+        // Função para popular selects de atendente com base nos dados do Firebase
+        function populateAttendantFilters() {
+            // Usa firebaseData em vez de allAttendances
+            if (!firebaseData || firebaseData.length === 0) {
+                // Limpa os selects se não houver dados
+                const selects = document.querySelectorAll('#attendantFilter, #saleAttendantFilter, #paymentAttendantFilter, #attendantAttendantFilter'); // Adicionado #attendantAttendantFilter
+                selects.forEach(select => {
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+                });
+                return;
+            }
+            
+            const attendantNames = [...new Set(firebaseData.map(att => att.attendantName).filter(name => name))]; // Filtra nomes vazios
+            attendantNames.sort(); // Ordena alfabeticamente
+            
+            const selects = document.querySelectorAll('#attendantFilter, #saleAttendantFilter, #paymentAttendantFilter, #attendantAttendantFilter'); // Adicionado #attendantAttendantFilter
+            
+            selects.forEach(select => {
+                const currentValue = select.value; // Salva o valor atual
+                // Limpar opções existentes (exceto a primeira "Todos")
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                // Adicionar atendentes
+                attendantNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+                // Restaura o valor selecionado, se ainda existir
+                if (attendantNames.includes(currentValue)) {
+                    select.value = currentValue;
+                } else {
+                    select.value = 'all'; // Volta para 'Todos' se o valor anterior não existe mais
+                }
+            });
+        }
+        
+        // --- Funções de Filtragem e Carregamento de Dados ---
+        
+        function applyFilters(data, filterPrefix) {
+            // Pega os valores dos filtros da interface
+            const period = document.getElementById(`${filterPrefix}PeriodFilter`)?.value || 'all';
+            const sector = document.getElementById(`${filterPrefix}SectorFilter`)?.value || 'all';
+            const operationType = document.getElementById(`${filterPrefix}OperationTypeFilter`)?.value || 'all';
+            const attendant = document.getElementById(`${filterPrefix}AttendantFilter`)?.value || 'all';
+            const channel = document.getElementById(`${filterPrefix}ChannelFilter`)?.value || 'all';
+            const paymentType = document.getElementById(`${filterPrefix}PaymentTypeFilter`)?.value || 'all'; // Específico do Caixa na aba Recentes
+            const paymentMethod = document.getElementById(`${filterPrefix}PaymentMethodFilter`)?.value || 'all'; // Avançado
+            const status = document.getElementById(`${filterPrefix}StatusFilter`)?.value || 'all'; // Avançado
+            const minValue = parseFloat(document.getElementById(`${filterPrefix}MinValueFilter`)?.value.replace(',', '.')) || 0; // Trata vírgula
+            const maxValue = parseFloat(document.getElementById(`${filterPrefix}MaxValueFilter`)?.value.replace(',', '.')) || Infinity; // Trata vírgula
+            const product = document.getElementById(`${filterPrefix}ProductFilter`)?.value.toLowerCase() || ''; // Avançado
+            const clientSearch = document.getElementById(`${filterPrefix}ClientSearchFilter`)?.value.toLowerCase() || ''; // Específico Clientes
+            const clientVisits = parseInt(document.getElementById(`${filterPrefix}ClientVisitsFilter`)?.value) || 0; // Específico Clientes
+
+            // Calcula limites de data para filtros de período
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime(); // Timestamp 00:00:00
+            const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime(); // Timestamp 00:00:00 do dia seguinte
+            const yesterdayStart = new Date(todayStart).setDate(new Date(todayStart).getDate() - 1); // Timestamp 00:00:00 de ontem
+            const weekAgoStart = new Date(todayStart).setDate(new Date(todayStart).getDate() - 7); // Timestamp 7 dias atrás
+            const monthAgoStart = new Date(todayStart).setMonth(new Date(todayStart).getMonth() - 1); // Timestamp 30 dias atrás
+
+            // Filtra os dados
+            return data.filter(item => {
+                // **Filtro de Período (usando timestamp numérico)**
+                const itemTimestampMs = getNumericTimestamp(item.timestamp); // Usa a nova função
+                if (itemTimestampMs === 0) return false; // Ignora itens sem timestamp válido
+
+                let periodMatch = true;
+                if (period === 'today') periodMatch = itemTimestampMs >= todayStart && itemTimestampMs < todayEnd;
+                else if (period === 'yesterday') periodMatch = itemTimestampMs >= yesterdayStart && itemTimestampMs < todayStart;
+                else if (period === 'week') periodMatch = itemTimestampMs >= weekAgoStart;
+                else if (period === 'month') periodMatch = itemTimestampMs >= monthAgoStart;
+                if (!periodMatch) return false;
+
+                // **Filtro de Setor** (Assume que 'sector' existe no Firebase)
+                if (sector !== 'all' && item.sector !== sector) return false;
+
+                // **Filtro de Tipo de Operação** (Assume que 'type' ou 'interactionType' ou 'attendanceType' existe)
+                // Normaliza o campo de tipo para 'itemType'
+                const itemType = item.type || item.interactionType || item.attendanceType || '';
+                let operationTypeMatch = true;
+                if (operationType !== 'all') {
+                    // Mapeamento dos valores do select para os tipos nos dados
+                    if (operationType === 'sale') operationTypeMatch = itemType === 'sale' || itemType === 'sale_completed' || itemType === 'purchase';
+                    else if (operationType === 'payment') operationTypeMatch = itemType === 'payment' || itemType.startsWith('payment_booklet');
+                    else if (operationType === 'exchange') operationTypeMatch = itemType === 'exchange';
+                    else if (operationType === 'info') operationTypeMatch = itemType === 'info' || itemType.startsWith('installment_query') || itemType === 'information';
+                    // Adicione outros mapeamentos se necessário
+                    else operationTypeMatch = itemType === operationType;
+                }
+                if (!operationTypeMatch) return false;
+
+                // **Filtro de Atendente** (Assume que 'attendantName' existe)
+                if (attendant !== 'all' && item.attendantName !== attendant) return false;
+
+                // **Filtro de Canal** (Assume que 'channel' ou 'attendanceChannel' existe)
+                const itemChannel = item.channel || item.attendanceChannel || '';
+                if (channel !== 'all' && itemChannel !== channel) return false;
+
+                // **Filtro de Tipo de Pagamento (Caixa - Aba Recentes)**
+                // Verifica se o filtro está ativo (visível) e se não é 'all'
+                const paymentTypeFilterGroup = document.getElementById('paymentTypeFilterGroup');
+                if (paymentTypeFilterGroup && paymentTypeFilterGroup.style.display !== 'none' && paymentType !== 'all') {
+                    // Adapte esta lógica conforme os tipos reais no Firebase para Caixa
+                    if (paymentType === 'purchase_payment' && itemType !== 'payment') return false;
+                    if (paymentType === 'booklet_payment' && !itemType.startsWith('payment_booklet')) return false;
+                    if (paymentType === 'installment_query' && !itemType.startsWith('installment_query')) return false;
+                }
+
+                // **Filtros Avançados**
+                const itemValue = parseFloat(item.value || item.saleValue || item.totalValue || 0); // Tenta encontrar o valor em diferentes campos
+                if (itemValue < minValue || itemValue > maxValue) return false;
+                
+                // Filtro Forma de Pagamento (Assume 'paymentMethod' existe)
+                if (paymentMethod !== 'all' && item.paymentMethod !== paymentMethod) return false;
+                
+                // Filtro Status (Assume 'status' existe - Adicionar se necessário)
+                // if (status !== 'all' && item.status !== status) return false;
+                
+                // Filtro Produto (Assume 'products', 'productSold', 'productsInterest' ou 'newProduct' existe)
+                const itemProducts = (item.products || item.productSold || item.productsInterest || item.newProduct || '').toLowerCase();
+                if (product && !itemProducts.includes(product)) return false;
+
+                // **Filtro de Busca de Cliente (Aba Clientes)** (Assume 'clientName' existe)
+                if (clientSearch && (!item.clientName || !item.clientName.toLowerCase().includes(clientSearch))) return false;
+                
+                // **Filtro Mínimo de Visitas (Aba Clientes)** - Este filtro é aplicado *depois* na função loadClients
+
+                return true; // Passou por todos os filtros aplicáveis a este item
+            });
+        }
+        
+        function loadRecentAttendances() {
+            const tableBody = document.getElementById("recentAttendancesTable");
+            tableBody.innerHTML = ""; // Limpar tabela
+            
+            // Aplica os filtros da aba "Recentes" (prefixo vazio) aos dados do Firebase
+            const filteredAttendances = applyFilters(firebaseData, ""); 
+            
+            if (filteredAttendances.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhum atendimento encontrado com os filtros aplicados</td></tr>';
+                return;
+            }
+            
+            // Popula a tabela com os dados filtrados
+            filteredAttendances.forEach(attendance => {
+                const row = document.createElement("tr");
+                // Adapta para buscar os campos corretos do Firebase (ex: typeName pode não existir)
+                const typeName = attendance.typeName || attendance.interactionTypeName || attendance.attendanceTypeName || attendance.type || "-";
+                const sectorName = attendance.sectorName || attendance.sector || "-";
+                const channel = attendance.channel || attendance.attendanceChannel || "presencial"; // Default para presencial se não especificado
+                const value = parseFloat(attendance.value || attendance.saleValue || attendance.totalValue || 0);
+                
+                row.innerHTML = `
+                    <td>${formatTimestamp(attendance.timestamp)}</td>
+                    <td>${attendance.clientName || "-"}</td>
+                    <td>${attendance.attendantName || "-"}</td>
+                    <td>${sectorName}</td>
+                    <td>${typeName}</td>
+                    <td>${getChannelBadge(channel)}</td>
+                    <td>${formatCurrency(value)}</td>
+                    <td><button class="view-details-btn" data-id="${attendance.id}">Ver Detalhes</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            // Adiciona listeners aos botões "Ver Detalhes" recém-criados
+            addDetailButtonListeners();
+        }
+        
+        function loadClients() {
+            const tableBody = document.getElementById("clientsTable");
+            tableBody.innerHTML = ""; // Limpar tabela
+            
+            // 1. Aplica os filtros da aba "Clientes" (prefixo 'client') aos dados do Firebase
+            const filteredAttendances = applyFilters(firebaseData, "client");
+            const clientVisitsFilter = parseInt(document.getElementById("clientVisitsFilter")?.value) || 0;
+            
+            // 2. Agrega dados por cliente a partir dos atendimentos filtrados
+            const clientMap = new Map();
+            filteredAttendances.forEach(att => {
+                if (!att.clientName) return; // Ignorar atendimentos sem nome de cliente
+                
+                if (!clientMap.has(att.clientName)) {
+                    const channel = att.channel || att.attendanceChannel || "";
+                    clientMap.set(att.clientName, {
+                        name: att.clientName,
+                        // Tenta pegar contato, priorizando o mais explícito
+                        contact: att.clientContact || (channel === "instagram" ? "@Instagram" : (channel === "whatsapp" ? "WhatsApp" : "-")),
+                        attendances: 0,
+                        purchases: 0,
+                        totalValue: 0,
+                        lastAttendanceTimestamp: 0, // Usar timestamp numérico para ordenação
+                        lastAttendanceDateString: "-" // Usar string formatada para exibição
+                    });
+                }
+                
+                const clientData = clientMap.get(att.clientName);
+                clientData.attendances++;
+                
+                // Verifica se é uma venda para somar valores
+                const itemType = att.type || att.interactionType || att.attendanceType || "";
+                if (itemType === "sale" || itemType === "sale_completed" || itemType === "purchase") {
+                    clientData.purchases++;
+                    clientData.totalValue += parseFloat(att.value || att.saleValue || att.totalValue || 0);
+                }
+                
+                // Atualiza último atendimento e contato se for mais recente
+                const itemTimestamp = att.timestamp || parseDate(att.date).getTime();
+                if (!isNaN(itemTimestamp) && itemTimestamp > clientData.lastAttendanceTimestamp) {
+                    clientData.lastAttendanceTimestamp = itemTimestamp;
+                    clientData.lastAttendanceDateString = att.date ? att.date.split(" ")[0] : "-"; // Formato DD/MM/YYYY
+                    // Atualiza contato se este atendimento for o mais recente
+                    const currentChannel = att.channel || att.attendanceChannel || "";
+                    clientData.contact = att.clientContact || (currentChannel === "instagram" ? "@Instagram" : (currentChannel === "whatsapp" ? "WhatsApp" : "-"));
+                }
+            });
+            
+            // Converte o Map para Array
+            let clientsData = Array.from(clientMap.values());
+            
+            // 3. Aplica filtro de Mínimo de Visitas (após agregação)
+            if (clientVisitsFilter > 0) {
+                clientsData = clientsData.filter(client => client.attendances >= clientVisitsFilter);
+            }
+            
+            if (clientsData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum cliente encontrado com os filtros aplicados</td></tr>';
+                return;
+            }
+            
+            // Ordena por último atendimento (mais recente primeiro)
+            clientsData.sort((a, b) => b.lastAttendanceTimestamp - a.lastAttendanceTimestamp);
+            
+            // Popula a tabela
+            clientsData.forEach(client => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${client.name}</td>
+                    <td>${client.contact}</td>
+                    <td>${client.attendances}</td>
+                    <td>${client.purchases}</td>
+                    <td>${formatCurrency(client.totalValue)}</td>
+                    <td>${client.lastAttendanceDateString}</td>
+                    <td><button class="view-details-btn" data-client-name="${client.name}">Ver Atendimentos</button></td> 
+                    <!-- TODO: Mudar botão para ver atendimentos do cliente -->
+                `;
+                tableBody.appendChild(row);
+            });
+            // TODO: Adicionar listeners para botões de detalhes do cliente (mostrar atendimentos)
+        }
+        
+        function loadSales() {
+            const tableBody = document.getElementById("salesTable");
+            tableBody.innerHTML = ""; // Limpar tabela
+            
+            // Filtrar apenas vendas (type 'sale', 'sale_completed', 'purchase') dos setores Loja Física e Social Media
+            // Esta filtragem inicial por tipo/setor agora é feita dentro de applyFilters
+            
+            // Aplicar filtros da aba Vendas (prefixo 'sale') aos dados do Firebase
+            const salesData = applyFilters(firebaseData, "sale");
+            
+            if (salesData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhuma venda encontrada com os filtros aplicados</td></tr>';
+                return;
+            }
+            
+            // Popula a tabela com os dados filtrados
+            salesData.forEach(sale => {
+                const row = document.createElement("tr");
+                const channel = sale.channel || sale.attendanceChannel || "presencial";
+                const value = parseFloat(sale.value || sale.saleValue || sale.totalValue || 0);
+                const paymentMethodName = sale.paymentMethodName || sale.paymentMethod || "-";
+                const sectorName = sale.sectorName || sale.sector || "-";
+                
+                row.innerHTML = `
+                    <td>${sale.date || "-"}</td>
+                    <td>${sale.clientName || "-"}</td>
+                    <td>${sale.attendantName || "-"}</td>
+                    <td>${sectorName}</td>
+                    <td>${getChannelBadge(channel)}</td>
+                    <td>${formatCurrency(value)}</td>
+                    <td>${paymentMethodName}</td>
+                    <td><button class="view-details-btn" data-id="${sale.id}">Ver Detalhes</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            addDetailButtonListeners();
+        }
+        
+        function loadPayments() {
+            const tableBody = document.getElementById("paymentsTable");
+            tableBody.innerHTML = ""; // Limpar tabela
+            
+            // Filtrar apenas registros do setor Caixa
+            // Esta filtragem inicial por setor agora é feita dentro de applyFilters
+            
+            // Aplicar filtros da aba Pagamentos (prefixo 'payment') aos dados do Firebase
+            const paymentsData = applyFilters(firebaseData, "payment");
+            
+            if (paymentsData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum pagamento encontrado com os filtros aplicados</td></tr>';
+                return;
+            }
+            
+            // Popula a tabela com os dados filtrados
+            paymentsData.forEach(payment => {
+                const row = document.createElement("tr");
+                const typeName = payment.typeName || payment.interactionTypeName || payment.attendanceTypeName || payment.type || "-";
+                const value = parseFloat(payment.value || payment.saleValue || payment.totalValue || 0);
+                const paymentMethodName = payment.paymentMethodName || payment.paymentMethod || "-";
+                
+                row.innerHTML = `
+                    <td>${payment.date || "-"}</td>
+                    <td>${payment.clientName || "-"}</td>
+                    <td>${payment.attendantName || "-"}</td>
+                    <td>${typeName}</td>
+                    <td>${formatCurrency(value)}</td>
+                    <td>${paymentMethodName}</td>
+                    <td><button class="view-details-btn" data-id="${payment.id}">Ver Detalhes</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            addDetailButtonListeners();
+        }
+        
+        function loadAttendants() {
+            const tableBody = document.getElementById("attendantsTable");
+            tableBody.innerHTML = ""; // Limpar tabela
+            
+            // 1. Aplica os filtros da aba "Atendentes" (prefixo 'attendant') aos dados do Firebase
+            const filteredAttendances = applyFilters(firebaseData, "attendant");
+            
+            // 2. Agrega dados por atendente a partir dos atendimentos filtrados
+            const attendantMap = new Map();
+            filteredAttendances.forEach(att => {
+                if (!att.attendantName) return; // Ignorar atendimentos sem nome de atendente
+                
+                if (!attendantMap.has(att.attendantName)) {
+                    attendantMap.set(att.attendantName, {
+                        name: att.attendantName,
+                        sector: att.sectorName || att.sector || "-", // Pega o setor do primeiro registro encontrado
+                        attendances: 0,
+                        sales: 0,
+                        totalValue: 0
+                    });
+                }
+                
+                const attendantData = attendantMap.get(att.attendantName);
+                attendantData.attendances++;
+                
+                // Verifica se é uma venda para somar valores
+                const itemType = att.type || att.interactionType || att.attendanceType || "";
+                if (itemType === "sale" || itemType === "sale_completed" || itemType === "purchase") {
+                    attendantData.sales++;
+                    attendantData.totalValue += parseFloat(att.value || att.saleValue || att.totalValue || 0);
+                }
+                // Atualiza o setor se encontrar um mais específico (opcional, pode causar inconsistência se atendente muda de setor)
+                // attendantData.sector = att.sectorName || att.sector || attendantData.sector;
+            });
+            
+            const attendantsData = Array.from(attendantMap.values());
+            
+            if (attendantsData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum atendente encontrado com os filtros aplicados</td></tr>';
+                return;
+            }
+            
+            // Ordena por nome do atendente
+            attendantsData.sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Popula a tabela
+            attendantsData.forEach(attendant => {
+                const avgTicket = attendant.sales > 0 ? attendant.totalValue / attendant.sales : 0;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${attendant.name}</td>
+                    <td>${attendant.sector}</td>
+                    <td>${attendant.attendances}</td>
+                    <td>${attendant.sales}</td>
+                    <td>${formatCurrency(attendant.totalValue)}</td>
+                    <td>${formatCurrency(avgTicket)}</td>
+                    <td><button class="view-details-btn" data-attendant-name="${attendant.name}">Ver Atendimentos</button></td> 
+                    <!-- TODO: Mudar botão para ver atendimentos do atendente -->
+                `;
+                tableBody.appendChild(row);
+            });
+            // TODO: Adicionar listeners para botões de detalhes do atendente (mostrar atendimentos)
+        }
+                // --- Funções Auxiliares e Event Listeners ---
+        
+        // Adiciona listeners aos botões "Ver Detalhes" nas tabelas
+        function addDetailButtonListeners() {
+            document.querySelectorAll(".view-details-btn[data-id]").forEach(btn => {
+                // Remove listener antigo para evitar duplicação (melhor abordagem)
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                newBtn.addEventListener("click", function() {
+                    const id = this.getAttribute("data-id");
+                    showAttendanceDetails(id);
+                });
+            });
+            
+            // TODO: Adicionar listeners para botões de detalhes de cliente/atendente se necessário
+            // Ex: document.querySelectorAll(".view-details-btn[data-client-name]").forEach(...)
+        }
+        
+        // Mostra o modal com detalhes (agora editáveis) de um atendimento
+        function showAttendanceDetails(id) {
+            const modal = document.getElementById("detailsModal");
+            const detailsContent = document.getElementById("detailsContent");
+            const editForm = document.getElementById("editForm");
+            
+            // Encontrar o atendimento pelo ID nos dados do Firebase
+            const attendanceDetails = firebaseData.find(att => att.id == id);
+            
+            if (!attendanceDetails) {
+                detailsContent.innerHTML = "<p>Detalhes não encontrados.</p>";
+                // Esconder botões de salvar/cancelar se não houver dados
+                editForm.querySelector("div[style*='text-align: right']").style.display = "none"; 
+                modal.style.display = "block";
+                return;
+            }
+            
+            // Mostrar botões de salvar/cancelar
+            editForm.querySelector("div[style*='text-align: right']").style.display = "block";
+            
+            // Mapeamento de chaves para labels e tipos de input
+            const fieldConfig = {
+                date: { label: "Data/Hora", type: "datetime-local" }, // Usar datetime-local para edição
+                clientName: { label: "Cliente", type: "text" },
+                clientContact: { label: "Contato", type: "text" },
+                attendantName: { label: "Atendente", type: "text" }, // Poderia ser select se houver lista fixa
+                sector: { label: "Setor", type: "select", options: { loja_fisica: "Loja Física", "Social Media": "Social Media", caixa: "Caixa" } },
+                type: { label: "Tipo", type: "text" }, // Simplificado para text, pode ser select se os tipos forem bem definidos
+                channel: { label: "Canal", type: "select", options: { presencial: "Presencial", whatsapp: "WhatsApp", instagram: "Instagram" } },
+                value: { label: "Valor (R$)", type: "number", step: "0.01" },
+                products: { label: "Produtos", type: "textarea" },
+                paymentMethod: { label: "Forma Pagamento", type: "select", options: { "": "N/A", cash: "Dinheiro", credit: "Cartão de Crédito", debit: "Cartão de Débito", pix: "PIX", transfer: "Transferência", other: "Outro" } },
+                installments: { label: "Parcelas", type: "text" }, // Manter como texto por simplicidade
+                observations: { label: "Observações", type: "textarea" }
+                // Adicione outros campos relevantes do Firebase aqui
+            };
+
+            let detailsHTML = `<input type="hidden" id="editAttendanceId" value="${id}">`; // Campo oculto para ID
+
+            for (const key in fieldConfig) {
+                if (attendanceDetails.hasOwnProperty(key) || fieldConfig[key]) { // Inclui campos mesmo que vazios no registro
+                    const config = fieldConfig[key];
+                    const currentValue = attendanceDetails[key] || "";
+                    
+                    detailsHTML += `<div class="form-group">`;
+                    detailsHTML += `<label for="edit_${key}">${config.label}:</label>`;
+                    
+                    if (config.type === "textarea") {
+                        detailsHTML += `<textarea id="edit_${key}" name="${key}" rows="3">${currentValue}</textarea>`;
+                    } else if (config.type === "select") {
+                        detailsHTML += `<select id="edit_${key}" name="${key}">`;
+                        for (const optValue in config.options) {
+                            const selected = optValue === currentValue ? " selected" : "";
+                            detailsHTML += `<option value="${optValue}"${selected}>${config.options[optValue]}</option>`;
+                        }
+                        detailsHTML += `</select>`;
+                     } else if (config.type === "datetime-local") {
+                        // Formatar timestamp ISO string para YYYY-MM-DDTHH:MM
+                        let formattedDate = "";
+                        try {
+                            // Usa o campo timestamp diretamente
+                            const dateObj = new Date(currentValue); 
+                            if (!isNaN(dateObj)) {
+                                // Ajusta para o formato YYYY-MM-DDTHH:MM (necessário para datetime-local)
+                                // Atenção: Isso usa o fuso horário local do navegador para exibir,
+                                // mas o valor original (presumivelmente UTC) é mantido.
+                                const year = dateObj.getFullYear();
+                                const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                                const day = dateObj.getDate().toString().padStart(2, '0');
+                                const hours = dateObj.getHours().toString().padStart(2, '0');
+                                const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+                                formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+                            }
+                        } catch (e) { console.error("Erro ao formatar timestamp para edição:", e); }
+                        detailsHTML += `<input type="datetime-local" id="edit_${key}" name="${key}" value="${formattedDate}">`;`;
+                    } else {
+                        // Inputs normais (text, number, etc.)
+                        const stepAttr = config.step ? ` step="${config.step}"` : "";
+                        detailsHTML += `<input type="${config.type}" id="edit_${key}" name="${key}" value="${currentValue}"${stepAttr}>`;
+                    }
+                    detailsHTML += `</div>`;
+                }
+            }
+            
+            detailsContent.innerHTML = detailsHTML;
+            modal.style.display = "block";
+        }
+        
+        // Fecha o modal
+        function closeModal() {
+            const modal = document.getElementById("detailsModal");
+            modal.style.display = "none";
+            document.getElementById("detailsContent").innerHTML = ""; // Limpa o conteúdo
+        }
+        
+        // Salva as alterações do formulário de edição no Firebase
+        function saveEditForm(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+            const form = event.target;
+            const id = form.querySelector("#editAttendanceId").value;
+            
+            if (!id) {
+                alert("Erro: ID do atendimento não encontrado.");
+                return;
+            }
+            
+            const updatedData = {};
+            const formData = new FormData(form);
+            
+            formData.forEach((value, key) => {
+                // Tratar data/hora local para formato ISO string e timestamp numérico
+                if (key === 'timestamp' && value) { // Agora o input se chama 'timestamp'
+                    try {
+                        const dateObj = new Date(value); // Cria Date a partir do input datetime-local
+                        if (!isNaN(dateObj)) {
+                            // Salva como ISO String (formato original do banco)
+                            updatedData[key] = dateObj.toISOString(); 
+                            // Mantém o timestamp numérico também, caso seja útil futuramente
+                            // updatedData['timestamp_ms'] = dateObj.getTime(); 
+                        } else {
+                            updatedData[key] = value; // Mantém valor original se inválido
+                        }
+                    } catch (e) {
+                        console.error("Erro ao processar data para salvar:", e);
+                        updatedData[key] = value; // Mantém valor original em caso de erro
+                    }
+                } else if (key === 'value') {
+                    // Garante que o valor seja número
+                    updatedData[key] = parseFloat(value) || 0;
+                } else {
+                    updatedData[key] = value;
+                }
+            });
+            
+            console.log("Salvando alterações para o ID:", id, updatedData);
+            
+            // Atualiza os dados no Firebase
+            attendancesRef.child(id).update(updatedData)
+                .then(() => {
+                    console.log("Dados atualizados com sucesso!");
+                    closeModal();
+                    // Os dados serão atualizados na tabela automaticamente pelo listener 'on("value")'
+                    alert("Atendimento atualizado com sucesso!");
+                })
+                .catch((error) => {
+                    console.error("Erro ao atualizar dados:", error);
+                    alert("Erro ao salvar alterações: " + error.message);
+                });
+        }
+
+        // Adiciona listeners para fechar/cancelar/salvar no modal
+        document.getElementById("closeModal").addEventListener("click", closeModal);
+        document.getElementById("cancelEdit").addEventListener("click", closeModal);
+        document.getElementById("editForm").addEventListener("submit", saveEditForm);
+        
+        // Fecha o modal se clicar fora do conteúdo
+        window.addEventListener("click", function(event) {
+            const modal = document.getElementById("detailsModal");
+            if (event.target == modal) {
+                closeModal();
+            }
+        });
+        
+        // Mostrar/ocultar filtros avançados (genérico)
+        function setupAdvancedFiltersToggle(toggleId, filtersId) {
+            const toggleButton = document.getElementById(toggleId);
+            const advancedFilters = document.getElementById(filtersId);
+            if (toggleButton && advancedFilters) {
+                toggleButton.addEventListener('click', function() {
+                    if (advancedFilters.classList.contains('show')) {
+                        advancedFilters.classList.remove('show');
+                        this.textContent = 'Mostrar filtros avançados';
+                    } else {
+                        advancedFilters.classList.add('show');
+                        this.textContent = 'Ocultar filtros avançados';
+                    }
+                });
+            }
+        }
+        
+        // Configurar todos os toggles de filtros avançados
+        setupAdvancedFiltersToggle('toggleAdvancedFilters', 'advancedFilters');
+        setupAdvancedFiltersToggle('toggleClientAdvancedFilters', 'clientAdvancedFilters');
+        setupAdvancedFiltersToggle('toggleSaleAdvancedFilters', 'saleAdvancedFilters');
+        
+        // Mostrar/ocultar filtro de tipo de pagamento quando o setor Caixa é selecionado (Aba Recentes)
+        document.getElementById('sectorFilter').addEventListener('change', function() {
+            const paymentTypeFilterGroup = document.getElementById('paymentTypeFilterGroup');
+            if (this.value === 'caixa') {
+                paymentTypeFilterGroup.style.display = 'flex';
+            } else {
+                paymentTypeFilterGroup.style.display = 'none';
+            }
+        });
+        
+        // Função genérica para limpar filtros de uma aba
+        function clearFiltersForTab(tabPrefix) {
+            const filterContainer = document.querySelector(`#${tabPrefix}-tab .filters`);
+            if (!filterContainer) return;
+            
+            filterContainer.querySelectorAll('select, input').forEach(el => {
+                if (el.tagName === 'SELECT') {
+                    // Define o valor padrão para 'all' ou o primeiro se 'all' não existir
+                    const allOption = el.querySelector('option[value="all"]');
+                    el.value = allOption ? 'all' : el.options[0].value;
+                } else {
+                    el.value = '';
+                }
+            });
+            // Esconder filtros dinâmicos/avançados
+            const advancedFilters = filterContainer.querySelector('.advanced-filters');
+            if (advancedFilters) advancedFilters.classList.remove('show');
+            const toggle = filterContainer.querySelector('.advanced-filters-toggle');
+            if (toggle) toggle.textContent = 'Mostrar filtros avançados';
+            
+            // Esconder filtro de tipo de pagamento se existir e não for a aba Caixa
+            const paymentTypeGroup = filterContainer.querySelector('#paymentTypeFilterGroup');
+            if (paymentTypeGroup && tabPrefix !== 'recent') paymentTypeGroup.style.display = 'none';
+            
+            // Recarregar dados da aba atual com filtros limpos (padrão 'all')
+            const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+            loadDataForTab(activeTab);
+        }
+        
+        // Função genérica para aplicar filtros de uma aba
+        function applyFiltersForTab(tabPrefix) {
+            console.log(`Aplicando filtros da aba ${tabPrefix}...`);
+            loadDataForTab(tabPrefix);
+        }
+        
+        // Função para carregar dados da aba ativa
+        function loadDataForTab(tabId) {
+            if (tabId === 'recent') {
+                loadRecentAttendances();
+            } else if (tabId === 'clients') {
+                loadClients();
+            } else if (tabId === 'sales') {
+                loadSales();
+            } else if (tabId === 'payments') {
+                loadPayments();
+            } else if (tabId === 'attendants') {
+                loadAttendants();
+            }
+        }
+        
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Lógica do Painel Administrativo -->
+    <script src="admin_logic.js"></script>
+
+</body>
+</html>
